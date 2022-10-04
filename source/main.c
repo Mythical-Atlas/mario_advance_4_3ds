@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
 		marioBigLeapSprites
 	);
 	
-	//playSound(&music);
+	playSound(&music);
 
 	while(aptMainLoop()) {
 		tickStartTime = osGetTime();
