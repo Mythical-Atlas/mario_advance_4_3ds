@@ -1,8 +1,9 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+
 #define SAMPLERATE 16000
-#define SAMPLESPERBUF SAMPLERATE / 60
+#define SAMPLESPERBUF SAMPLERATE
 #define BYTESPERSAMPLE 4
 
 #define BUFFER_SIZE SAMPLESPERBUF * BYTESPERSAMPLE
@@ -57,15 +58,36 @@ if(bytesRead < BUFFER_SIZE) {audioFile->fileEnd = 2;}*/
 void playSound(AudioFile* audioFile) {
 	rewind(audioFile->filePointer);
 	audioFile->fillBlock = 0;
+	audioFile->fileEnd = 0;
 	
-	fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
+	size_t bytesRead = fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
 	fillBuffer(audioFile->waveBuf[0].data_pcm16, audioFile->inputBuffer, audioFile->waveBuf[audioFile->fillBlock].nsamples);
-	fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
-	fillBuffer(audioFile->waveBuf[1].data_pcm16, audioFile->inputBuffer, audioFile->waveBuf[audioFile->fillBlock].nsamples);
-	fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
-	
 	ndspChnWaveBufAdd(audioFile->channel, &audioFile->waveBuf[0]);
-	ndspChnWaveBufAdd(audioFile->channel, &audioFile->waveBuf[1]);
+	
+	if(bytesRead < BUFFER_SIZE) {
+		rewind(audioFile->filePointer);
+		audioFile->fileEnd = 2;
+		audioFile->fillBlock = 1;
+	}
+	else {
+		bytesRead = fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
+		fillBuffer(audioFile->waveBuf[1].data_pcm16, audioFile->inputBuffer, audioFile->waveBuf[audioFile->fillBlock].nsamples);
+		ndspChnWaveBufAdd(audioFile->channel, &audioFile->waveBuf[1]);
+		
+		if(bytesRead < BUFFER_SIZE) {
+			rewind(audioFile->filePointer);
+			audioFile->fileEnd = 1;
+			audioFile->fillBlock = 0;
+		}
+		else {
+			bytesRead = fread(audioFile->inputBuffer, sizeof(char), BUFFER_SIZE, audioFile->filePointer);
+			if(bytesRead < BUFFER_SIZE) {
+				rewind(audioFile->filePointer);
+				audioFile->fileEnd = 0;
+				audioFile->fillBlock = 1;
+			}
+		}
+	}
 }
 
 void updateSound(AudioFile* audioFile) {

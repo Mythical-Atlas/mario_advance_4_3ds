@@ -163,6 +163,13 @@ int main(int argc, char* argv[]) {
 		camPos.x = player.pos.x - 200;
 		
 		if(player.state == STATE_DEATH && songIndex != SONG_DEATH) {
+			ndspChnWaveBufClear(0);
+			ndspChnReset(0);
+			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
+			ndspChnSetRate(0, SAMPLERATE);
+			ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+	
+			deathMusic.fileEnd = 0;
 			playSound(&deathMusic);
 			songIndex = SONG_DEATH;
 		}
@@ -237,7 +244,7 @@ int main(int argc, char* argv[]) {
 		else {updateSound(&music);}*/
 		
 		if(songIndex == SONG_11) {updateSound(&music);}
-		if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {
+		else if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {
 			songIndex = SONG_11;
 			initPlayer(
 				&player,
@@ -254,7 +261,12 @@ int main(int argc, char* argv[]) {
 				marioBigRunSprites,
 				marioBigLeapSprites
 			);
-			deathMusic.fileEnd = 0;
+			
+			ndspChnWaveBufClear(0);
+			ndspChnReset(0);
+			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
+			ndspChnSetRate(0, SAMPLERATE);
+			ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
 			playSound(&music);
 		}
 		else if(songIndex == SONG_DEATH) {updateSound(&deathMusic);}

@@ -278,11 +278,18 @@ void updatePlayer(Player* player, int map[][15], int timeDelta, PlayerObjectInfo
 		if(player->ground) {
 			if(checkKeyDown(KEY_A)) {
 				player->vel.y = -JUMP_IMPULSE;
-				playSound(&player->jumpSound);
-				player->jumpSound.fileEnd = 0;
 				
 				if(player->state != STATE_RUN) {player->state = STATE_JUMP;}
 				else {player->state = STATE_LEAP;}
+				
+				ndspChnWaveBufClear(1);
+				ndspChnReset(1);
+				ndspChnSetInterp(1, NDSP_INTERP_LINEAR);
+				ndspChnSetRate(1, SAMPLERATE);
+				ndspChnSetFormat(1, NDSP_FORMAT_STEREO_PCM16);
+				
+				player->jumpSound.fileEnd = 0;
+				playSound(&player->jumpSound);
 			}
 			else {player->vel.y = 0;}
 		}
