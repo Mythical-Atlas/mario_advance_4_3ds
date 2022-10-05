@@ -1,6 +1,8 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
+#include "mapsHandler.h"
+
 typedef struct {
 	float x;
 	float y;
@@ -90,13 +92,13 @@ bool checkBBOverlap(BoundBox b1, BoundBox b2) {
 	return xAxisOverlap && yAxisOverlap;
 }
 
-int checkSurroundingSolids(int x, int y, int map[200][15], int w, int h) {
+int checkSurroundingSolids(int x, int y, Tilemap tilemap, int w, int h) {
 	int ss = 0;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {
 			if(x + ix >= 0 && x + ix < w && y + iy >= 0 && y + iy < h) {
-				if(checkSolid(map[x + ix][y + iy])) {
+				if(checkSolid(getMapValue(tilemap, x + ix, y + iy))) {
 					if(ix == -1 && iy == -1) {ss += 0b00000001;}
 					if(ix ==  0 && iy == -1) {ss += 0b00000010;}
 					if(ix ==  1 && iy == -1) {ss += 0b00000100;}
@@ -113,13 +115,13 @@ int checkSurroundingSolids(int x, int y, int map[200][15], int w, int h) {
 	return ss;
 }
 
-int checkSurroundingPlatforms(int x, int y, int map[200][15], int w, int h) {
+int checkSurroundingPlatforms(int x, int y, Tilemap tilemap, int w, int h) {
 	int ss = 0;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {
 			if(x + ix >= 0 && x + ix < w && y + iy >= 0 && y + iy < h) {
-				if(checkPlatform(map[x + ix][y + iy]) && y + iy >= y && iy != -1 && !(ix != 0 && ix == 0)) {
+				if(checkPlatform(getMapValue(tilemap, x + ix, y + iy)) && y + iy >= y && iy != -1 && !(ix != 0 && ix == 0)) {
 					if(ix == -1 && iy == -1) {ss += 0b00000001;}
 					if(ix ==  0 && iy == -1) {ss += 0b00000010;}
 					if(ix ==  1 && iy == -1) {ss += 0b00000100;}

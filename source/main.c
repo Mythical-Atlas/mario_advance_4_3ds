@@ -9,40 +9,16 @@
 #include "audio.h"
 #include "collision.h"
 #include "player.h"
-#include "map.h"
+#include "mapsHandler.h"
 #include "level11.h"
-#include "question.h"
-
-#define SCREEN_WIDTH  400
-#define SCREEN_HEIGHT 240
+#include "goomba.h"
+#include "mushroom.h"
+#include "particle.h"
 
 #define SONG_11 0
 #define SONG_DEATH 1
 
-C2D_SpriteSheet imageSheet;
-
-C2D_Sprite marioSmallWalkSprites[2];
-C2D_Sprite marioSmallJumpSprites[1];
-C2D_Sprite marioSmallSkidSprites[1];
-C2D_Sprite marioSmallDeathSprites[1];
-C2D_Sprite marioSmallRunSprites[2];
-C2D_Sprite marioSmallLeapSprites[1];
-
-C2D_Sprite marioBigWalkSprites[4];
-C2D_Sprite marioBigJumpSprites[1];
-C2D_Sprite marioBigFallSprites[1];
-C2D_Sprite marioBigSkidSprites[1];
-C2D_Sprite marioBigRunSprites[4];
-C2D_Sprite marioBigLeapSprites[1];
-
-C2D_Sprite bgSprite;
-
-C2D_Sprite tileSprites[231];
-
-C2D_Sprite questionBlockSprites[4];
-
 Player player;
-PlayerObjectInfo playerObjectInfo;
 
 Vec2 camPos;
 
@@ -56,9 +32,6 @@ int songIndex;
 AudioFile music;
 AudioFile deathMusic;
 
-QuestionBlock questionBlockObj;
-bool questionObjExists;
-
 int tileAnimTimer;
 int tileAnimFrame;
 
@@ -68,86 +41,23 @@ int main(int argc, char* argv[]) {
 	numLongFrames = 0;
 	lastLongLength = 0;
 	
-	questionObjExists = 0;
-	
 	tileAnimTimer = 0;
 	tileAnimFrame = 0;
 	
 	initLibs();
+	
+	loadGraphics();
 
 	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	consoleInit(GFX_BOTTOM, NULL);
-
-	imageSheet = C2D_SpriteSheetLoad("romfs:/gfx/images.t3x");
-	if (!imageSheet) {svcBreak(USERBREAK_PANIC);}
-
-	C2D_SpriteFromSheet(&marioSmallWalkSprites[0], imageSheet, 0);
-	C2D_SpriteFromSheet(&marioSmallWalkSprites[1], imageSheet, 1);
-	C2D_SpriteFromSheet(&marioSmallJumpSprites[0], imageSheet, 2);
-	C2D_SpriteFromSheet(&marioSmallSkidSprites[0], imageSheet, 3);
-	C2D_SpriteFromSheet(&marioSmallDeathSprites[0], imageSheet, 4);
-	C2D_SpriteFromSheet(&marioSmallRunSprites[0], imageSheet, 5);
-	C2D_SpriteFromSheet(&marioSmallRunSprites[1], imageSheet, 6);
-	C2D_SpriteFromSheet(&marioSmallLeapSprites[0], imageSheet, 7);
 	
-	C2D_SpriteFromSheet(&marioBigWalkSprites[0], imageSheet, 8);
-	C2D_SpriteFromSheet(&marioBigWalkSprites[1], imageSheet, 9);
-	C2D_SpriteFromSheet(&marioBigWalkSprites[2], imageSheet, 10);
-	C2D_SpriteFromSheet(&marioBigWalkSprites[3], imageSheet, 11);
-	C2D_SpriteFromSheet(&marioBigJumpSprites[0], imageSheet, 12);
-	C2D_SpriteFromSheet(&marioBigFallSprites[0], imageSheet, 13);
-	C2D_SpriteFromSheet(&marioBigSkidSprites[0], imageSheet, 14);
-	C2D_SpriteFromSheet(&marioBigRunSprites[0], imageSheet, 15);
-	C2D_SpriteFromSheet(&marioBigRunSprites[1], imageSheet, 16);
-	C2D_SpriteFromSheet(&marioBigRunSprites[2], imageSheet, 17);
-	C2D_SpriteFromSheet(&marioBigRunSprites[3], imageSheet, 18);
-	C2D_SpriteFromSheet(&marioBigLeapSprites[0], imageSheet, 19);
-	
-	C2D_SpriteFromSheet(&bgSprite, imageSheet, 20);
-	
-	C2D_SpriteFromSheet(&questionBlockSprites[0], imageSheet, 143);
-	C2D_SpriteFromSheet(&questionBlockSprites[1], imageSheet, 144);
-	C2D_SpriteFromSheet(&questionBlockSprites[2], imageSheet, 145);
-	C2D_SpriteFromSheet(&questionBlockSprites[3], imageSheet, 146);
-	
-	int tileImageIndex = 21;
-	for(int i =   7; i <=  16; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i =  26; i <=  37; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i =  47; i <=  62; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i =  68; i <=  83; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i =  89; i <= 100; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 108; i <= 112; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 114; i <= 121; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 129; i <= 133; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 135; i <= 142; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 154; i <= 163; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 168; i <= 174; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 177; i <= 181; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 198; i <= 202; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	for(int i = 219; i <= 221; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}
-	
-	initLevel11(tileSprites);
+	initObjects();
+	initLevel11(&player);
 	
 	openSoundFile(&music, "romfs:/music11.raw", 0, 0);
 	openSoundFile(&deathMusic, "romfs:/death.raw", 0, 0);
 	
 	songIndex = SONG_11;
-	
-	initPlayer(
-		&player,
-		marioSmallWalkSprites,
-		marioSmallSkidSprites,
-		marioSmallJumpSprites,
-		marioSmallDeathSprites,
-		marioSmallRunSprites,
-		marioSmallLeapSprites,
-		marioBigWalkSprites,
-		marioBigSkidSprites,
-		marioBigJumpSprites,
-		marioBigFallSprites,
-		marioBigRunSprites,
-		marioBigLeapSprites
-	);
 	
 	playSound(&music);
 
@@ -159,8 +69,19 @@ int main(int argc, char* argv[]) {
 
 		if(checkKeyDown(KEY_START)) {break;}
 		
-		updatePlayer(&player, map, previousFrameDuration, &playerObjectInfo);
+		updatePlayer(&player, level11Tilemap, previousFrameDuration);
 		camPos.x = player.pos.x - 200;
+		
+		for(int i = 0; i < MAX_OBJECTS; i++) {if(particles[i].anim.sprites == questionBlockSprites && particles[i].exists) {potentialQuestionBlocks[i] = 1;}}
+		
+		updateObjects(previousFrameDuration);
+		
+		for(int i = 0; i < MAX_OBJECTS; i++) {
+			if(potentialQuestionBlocks[i] == 1 && !particles[i].exists) {
+				potentialQuestionBlocks[i] = 0;
+				setMapValue(&level11Tilemap, (int)(particles[i].pos.x / 16), (int)((particles[i].pos.y + 2) / 16), 154);
+			}
+		}
 		
 		if(player.state == STATE_DEATH && songIndex != SONG_DEATH) {
 			ndspChnWaveBufClear(0);
@@ -174,38 +95,9 @@ int main(int argc, char* argv[]) {
 			songIndex = SONG_DEATH;
 		}
 		
-		if(questionObjExists) {
-			if(updateQuestionBlock(&questionBlockObj, previousFrameDuration)) {
-				questionObjExists = 0;
-				map[questionBlockObj.xTile][questionBlockObj.yTile] = 108;
-			}
-		}
-		
-		if(playerObjectInfo.hitQuestionBlock && !questionObjExists) {
-			questionObjExists = 1;
-			playerObjectInfo.hitQuestionBlock = 0;
-			initQuestionBlock(&questionBlockObj, playerObjectInfo.qbx, playerObjectInfo.qby, questionBlockSprites);
-			map[playerObjectInfo.qbx][playerObjectInfo.qby] = -1;
-		}
-		
 		consolePrint("Press start to exit", 0, 0);
-		
 		printf("\x1b[%d;%dHMilliseconds Elapsed: %llu", (1 + 1), (0 + 1), osGetTime() - startTime);
-		/*printf("\x1b[%d;%dHPlayer X: %f", (3 + 1), (0 + 1), px);
-		printf("\x1b[%d;%dHPlayer Y: %f", (4 + 1), (0 + 1), py);*/
-		//printf("\x1b[%d;%dHScroll: %f", (5 + 1), (0 + 1), scroll);
-		//printf("\x1b[%d;%dHAdjusted Player X: %f", (6 + 1), (0 + 1), apx);
-		
-		printf("\x1b[%d;%dHGround: %i", (7 + 1), (0 + 1), player.ground);
-		//printf("\x1b[%d;%dHSurrounding Solids: %i", (8 + 1), (0 + 1), surroundingSolids);
-		
-		//printf("\x1b[%d;%dHCh. 1 Buf Seq:    %i", (24 + 1), (0 + 1), ndspChnGetWaveBufSeq(1));
-		//printf("\x1b[%d;%dHCh. 1 Sample Pos: %i", (25 + 1), (0 + 1), ndspChnGetSamplePos(1));
-		
-		//printf("\x1b[%d;%dHMax Time Per Frame: 16.67 ms", (26 + 1), (0 + 1));
 		printf("\x1b[%d;%dHPrevious Frame:     %i ms", (27 + 1), (0 + 1), previousFrameDuration);
-		//printf("\x1b[%d;%dHNumber of Long Frames: %i frames", (28 + 1), (0 + 1), numLongFrames);
-		//printf("\x1b[%d;%dHPrevious Long Frame Length: %i ms", (29 + 1), (0 + 1), lastLongLength);
 		
 		if(tileAnimTimer >= 100) {
 			tileAnimFrame++;
@@ -223,16 +115,7 @@ int main(int argc, char* argv[]) {
 		
 		drawTilemap(level11Tilemap, camPos, tileAnimFrame);
 		
-		if(questionObjExists) {drawSprite(&questionBlockObj.questionBumpAnim.sprites[questionBlockObj.questionBumpAnim.frame], questionBlockObj.xTile * 16 - (int)camPos.x, questionBlockObj.yTile * 16 - (int)camPos.y - 2);}
-		
-		/*for(int x = 0; x < 200; x++) {
-			for(int y = 0; y < 15; y++) {
-				if(map[x][y]) {
-					drawSprite(&tileSprite, x * 16 + ((int)scroll % (200 * 16)), y * 16);
-					drawSprite(&tileSprite, x * 16 + ((int)scroll % (200 * 16)) + 200 * 16, y * 16);
-				}
-			}
-		}*/
+		drawObjects(camPos);
 		
 		drawPlayer(&player, camPos);
 		
@@ -245,29 +128,17 @@ int main(int argc, char* argv[]) {
 		
 		if(songIndex == SONG_11) {updateSound(&music);}
 		else if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {
-			songIndex = SONG_11;
-			initPlayer(
-				&player,
-				marioSmallWalkSprites,
-				marioSmallSkidSprites,
-				marioSmallJumpSprites,
-				marioSmallDeathSprites,
-				marioSmallRunSprites,
-				marioSmallLeapSprites,
-				marioBigWalkSprites,
-				marioBigSkidSprites,
-				marioBigJumpSprites,
-				marioBigFallSprites,
-				marioBigRunSprites,
-				marioBigLeapSprites
-			);
+			initObjects();
+			initLevel11(&player);
 			
 			ndspChnWaveBufClear(0);
 			ndspChnReset(0);
 			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
 			ndspChnSetRate(0, SAMPLERATE);
 			ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+			
 			playSound(&music);
+			songIndex = SONG_11;
 		}
 		else if(songIndex == SONG_DEATH) {updateSound(&deathMusic);}
 		

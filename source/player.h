@@ -5,6 +5,10 @@
 
 #include "collision.h"
 #include "csimple.h"
+#include "goomba.h"
+#include "mushroom.h"
+#include "objectsHandler.h"
+#include "graphicsHandler.h"
 
 #define WALK_ACCEL        0.003f
 #define WALK_MAX_SPEED    0.08f
@@ -64,12 +68,6 @@ typedef struct {
 	AudioFile jumpSound;
 } Player;
 
-typedef struct {
-	bool hitQuestionBlock;
-	int qbx;
-	int qby;
-} PlayerObjectInfo;
-
 int getNumTests(int surroundingSolids) {
 	int numTestSolids = 0;
 	if((surroundingSolids &   1) ==   1) {numTestSolids++;}
@@ -105,22 +103,8 @@ void getTestPositions(int surroundingSolids, int numTestSolids, int* xTests, int
 	printf("\x1b[%d;%dH%i", (3 + 1), (38 + 1), getBit(surroundingSolids, 7));
 }
 
-void initPlayer(
-	Player* player,
-	C2D_Sprite* smallWalkSprites,
-	C2D_Sprite* smallSkidSprites,
-	C2D_Sprite* smallJumpSprites,
-	C2D_Sprite* smallDeathSprites,
-	C2D_Sprite* smallRunSprites,
-	C2D_Sprite* smallLeapSprites,
-	C2D_Sprite* bigWalkSprites,
-	C2D_Sprite* bigSkidSprites,
-	C2D_Sprite* bigJumpSprites,
-	C2D_Sprite* bigFallSprites,
-	C2D_Sprite* bigRunSprites,
-	C2D_Sprite* bigLeapSprites
-) {
-	setVec2(&player->pos, 16, 240 - 16);
+void initPlayer(Player* player, int x, int y) {
+	setVec2(&player->pos, x, y);
 	setVec2(&player->vel, 0, 0);
 	
 	player->ground = 0;
@@ -132,73 +116,73 @@ void initPlayer(
 	player->state = STATE_IDLE;
 	player->animation = ANIM_IDLE;
 	
-	player->smallWalkAnim.sprites = smallWalkSprites;
+	player->smallWalkAnim.sprites = marioSmallWalkSprites;
 	player->smallWalkAnim.size = 2;
 	player->smallWalkAnim.frame = 0;
 	player->smallWalkAnim.frameStartTime = osGetTime();
 	player->smallWalkAnim.frameLength = 50;
 	
-	player->smallSkidAnim.sprites = smallSkidSprites;
+	player->smallSkidAnim.sprites = marioSmallSkidSprites;
 	player->smallSkidAnim.size = 1;
 	player->smallSkidAnim.frame = 0;
 	player->smallSkidAnim.frameStartTime = osGetTime();
 	player->smallSkidAnim.frameLength = 50;
 	
-	player->smallJumpAnim.sprites = smallJumpSprites;
+	player->smallJumpAnim.sprites = marioSmallJumpSprites;
 	player->smallJumpAnim.size = 1;
 	player->smallJumpAnim.frame = 0;
 	player->smallJumpAnim.frameStartTime = osGetTime();
 	player->smallJumpAnim.frameLength = 50;
 	
-	player->smallDeathAnim.sprites = smallDeathSprites;
+	player->smallDeathAnim.sprites = marioSmallDeathSprites;
 	player->smallDeathAnim.size = 1;
 	player->smallDeathAnim.frame = 0;
 	player->smallDeathAnim.frameStartTime = osGetTime();
 	player->smallDeathAnim.frameLength = 50;
 	
-	player->smallRunAnim.sprites = smallRunSprites;
+	player->smallRunAnim.sprites = marioSmallRunSprites;
 	player->smallRunAnim.size = 2;
 	player->smallRunAnim.frame = 0;
 	player->smallRunAnim.frameStartTime = osGetTime();
 	player->smallRunAnim.frameLength = 20;
 	
-	player->smallLeapAnim.sprites = smallLeapSprites;
+	player->smallLeapAnim.sprites = marioSmallLeapSprites;
 	player->smallLeapAnim.size = 1;
 	player->smallLeapAnim.frame = 0;
 	player->smallLeapAnim.frameStartTime = osGetTime();
 	player->smallLeapAnim.frameLength = 50;
 	
-	player->bigWalkAnim.sprites = bigWalkSprites;
+	player->bigWalkAnim.sprites = marioBigWalkSprites;
 	player->bigWalkAnim.size = 4;
 	player->bigWalkAnim.frame = 0;
 	player->bigWalkAnim.frameStartTime = osGetTime();
 	player->bigWalkAnim.frameLength = 50;
 	
-	player->bigSkidAnim.sprites = bigSkidSprites;
+	player->bigSkidAnim.sprites = marioBigSkidSprites;
 	player->bigSkidAnim.size = 1;
 	player->bigSkidAnim.frame = 0;
 	player->bigSkidAnim.frameStartTime = osGetTime();
 	player->bigSkidAnim.frameLength = 50;
 	
-	player->bigJumpAnim.sprites = bigJumpSprites;
+	player->bigJumpAnim.sprites = marioBigJumpSprites;
 	player->bigJumpAnim.size = 1;
 	player->bigJumpAnim.frame = 0;
 	player->bigJumpAnim.frameStartTime = osGetTime();
 	player->bigJumpAnim.frameLength = 50;
 	
-	player->bigFallAnim.sprites = bigFallSprites;
+	player->bigFallAnim.sprites = marioBigFallSprites;
 	player->bigFallAnim.size = 1;
 	player->bigFallAnim.frame = 0;
 	player->bigFallAnim.frameStartTime = osGetTime();
 	player->bigFallAnim.frameLength = 50;
 	
-	player->bigRunAnim.sprites = bigRunSprites;
+	player->bigRunAnim.sprites = marioBigRunSprites;
 	player->bigRunAnim.size = 4;
 	player->bigRunAnim.frame = 0;
 	player->bigRunAnim.frameStartTime = osGetTime();
 	player->bigRunAnim.frameLength = 20;
 	
-	player->bigLeapAnim.sprites = bigLeapSprites;
+	player->bigLeapAnim.sprites = marioBigLeapSprites;
 	player->bigLeapAnim.size = 1;
 	player->bigLeapAnim.frame = 0;
 	player->bigLeapAnim.frameStartTime = osGetTime();
@@ -208,10 +192,10 @@ void initPlayer(
 	player->jumpSound.fileEnd = 2;
 }
 
-void updatePlayer(Player* player, int map[][15], int timeDelta, PlayerObjectInfo* playerObjectInfo) {
+void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 	if(player->state != STATE_DEATH) {
-		int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), map, 200, 15);
-		int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), map, 200, 15);
+		int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
+		int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
 		surroundingSolids += surroundingPlatforms;
 		
 		player->ground = false;
@@ -308,10 +292,8 @@ void updatePlayer(Player* player, int map[][15], int timeDelta, PlayerObjectInfo
 		player->pos.x += player->vel.x * timeDelta;
 		player->pos.y += player->vel.y * timeDelta;
 		
-		// REALLY BAD MESSY CODE PLEASE FIX
-		
-		surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), map, 200, 15);
-		surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), map, 200, 15);
+		surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
+		surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
 		
 		int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 		int xTests[numTestSolids];
@@ -329,10 +311,9 @@ void updatePlayer(Player* player, int map[][15], int timeDelta, PlayerObjectInfo
 		// check for collision, and repeat if collision found
 		for(int i = 0; i < numTestSolids; i++) {
 			if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]))) {
-				Vec2 overlap = findSmallestOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(map[xTests[i]][yTests[i]]));
+				Vec2 overlap = findSmallestOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
 				
 				player->pos.x -= overlap.x;
-				//apx = px - ((int)scroll % (200 * 16));
 				player->pos.y -= overlap.y;
 				consolePrint("COLLIDE", 0, 2);
 				
@@ -341,44 +322,51 @@ void updatePlayer(Player* player, int map[][15], int timeDelta, PlayerObjectInfo
 				
 				if(overlap.x != 0 && overlap.y != 0) {break;}
 				
-				if(
-					(map[xTests[i]][yTests[i]] == 108 ||
-					 map[xTests[i]][yTests[i]] == 109 ||
-					 map[xTests[i]][yTests[i]] == 110 ||
-					 map[xTests[i]][yTests[i]] == 111) &&
-					overlap.y < 0 && overlap.x == 0
-				) {
-					playerObjectInfo->hitQuestionBlock = 1;
-					playerObjectInfo->qbx = xTests[i];
-					playerObjectInfo->qby = yTests[i];
+				if(getMapValue(tilemap, xTests[i], yTests[i]) == 108 && overlap.y < 0 && overlap.x == 0) {
+					setMapValue(&tilemap, xTests[i], yTests[i], -1);
+					
+					int partIndex = findFreeParticle();
+					if(partIndex != -1) {initParticle(&particles[partIndex], questionBlockSprites, 3, 50, xTests[i] * 16, yTests[i] * 16 - 2);}
+					
+					int mushIndex = findFreeMushroom();
+					if(mushIndex != -1) {initMushroom(&mushrooms[mushIndex], xTests[i] * 16 + 8, yTests[i] * 16);}
 				}
 			}
 		}
 		
-		if(
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y - 16) / 16)] == 129 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y - 16) / 16)] == 130 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y - 16) / 16)] == 131 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y - 16) / 16)] == 132
-		) {map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y - 16) / 16)] = -1;}
-		if(
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y - 16) / 16)] == 129 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y - 16) / 16)] == 130 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y - 16) / 16)] == 131 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y - 16) / 16)] == 132
-		) {map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y - 16) / 16)] = -1;}
-		if(
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y -  0) / 16)] == 129 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y -  0) / 16)] == 130 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y -  0) / 16)] == 131 ||
-			map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y -  0) / 16)] == 132
-		) {map[(int)((player->pos.x + 8) / 16)][(int)((player->pos.y -  0) / 16)] = -1;}
-		if(
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y -  0) / 16)] == 129 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y -  0) / 16)] == 130 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y -  0) / 16)] == 131 ||
-			map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y -  0) / 16)] == 132
-		) {map[(int)((player->pos.x - 8) / 16)][(int)((player->pos.y -  0) / 16)] = -1;}
+		if(getMapValue(tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y - 16) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y - 16) / 16), -1);
+		}
+		if(getMapValue(tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y - 16) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y - 16) / 16), -1);
+		}
+		if(getMapValue(tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y) / 16), -1);
+		}
+		if(getMapValue(tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y) / 16), -1);
+		}
+		
+		for(int i = 0; i < MAX_OBJECTS; i++) {
+			if(goombas[i].exists) {
+				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getGoombaBB(&goombas[i]))) {
+					if(player->vel.y > 0) {
+						goombas[i].exists = 0;
+						player->vel.y = -0.3f;
+					}
+					else {player->state = STATE_DEATH;}
+				}
+			}
+		}
+		
+		for(int i = 0; i < MAX_OBJECTS; i++) {
+			if(mushrooms[i].exists) {
+				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getMushroomBB(&mushrooms[i]))) {
+					mushrooms[i].exists = 0;
+					player->health = 1;
+				}
+			}
+		}
 		
 		/*if(px < 0) {px = 0;}
 		if(px >= SCREEN_WIDTH - 16) {px = SCREEN_WIDTH - 16 - 1;}

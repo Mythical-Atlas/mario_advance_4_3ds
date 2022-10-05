@@ -148,3 +148,6 @@
 #define images_question_block1_idx 144
 #define images_question_block2_idx 145
 #define images_question_block3_idx 146
+#define images_goomba0_idx 147
+#define images_goomba1_idx 148
+#define images_mushroom_idx 149
