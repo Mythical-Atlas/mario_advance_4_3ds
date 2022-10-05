@@ -9,6 +9,8 @@
 #include "mushroom.h"
 #include "objectsHandler.h"
 #include "graphicsHandler.h"
+#include "questionBlock.h"
+#include "particle.h"
 
 #define WALK_ACCEL        0.003f
 #define WALK_MAX_SPEED    0.08f
@@ -53,17 +55,9 @@ typedef struct {
 	int animation;
 	
 	Animation smallWalkAnim;
-	Animation smallSkidAnim;
-	Animation smallJumpAnim;
-	Animation smallDeathAnim;
 	Animation smallRunAnim;
-	Animation smallLeapAnim;
 	Animation bigWalkAnim;
-	Animation bigSkidAnim;
-	Animation bigJumpAnim;
-	Animation bigFallAnim;
 	Animation bigRunAnim;
-	Animation bigLeapAnim;
 	
 	AudioFile jumpSound;
 } Player;
@@ -122,35 +116,11 @@ void initPlayer(Player* player, int x, int y) {
 	player->smallWalkAnim.frameStartTime = osGetTime();
 	player->smallWalkAnim.frameLength = 50;
 	
-	player->smallSkidAnim.sprites = marioSmallSkidSprites;
-	player->smallSkidAnim.size = 1;
-	player->smallSkidAnim.frame = 0;
-	player->smallSkidAnim.frameStartTime = osGetTime();
-	player->smallSkidAnim.frameLength = 50;
-	
-	player->smallJumpAnim.sprites = marioSmallJumpSprites;
-	player->smallJumpAnim.size = 1;
-	player->smallJumpAnim.frame = 0;
-	player->smallJumpAnim.frameStartTime = osGetTime();
-	player->smallJumpAnim.frameLength = 50;
-	
-	player->smallDeathAnim.sprites = marioSmallDeathSprites;
-	player->smallDeathAnim.size = 1;
-	player->smallDeathAnim.frame = 0;
-	player->smallDeathAnim.frameStartTime = osGetTime();
-	player->smallDeathAnim.frameLength = 50;
-	
 	player->smallRunAnim.sprites = marioSmallRunSprites;
 	player->smallRunAnim.size = 2;
 	player->smallRunAnim.frame = 0;
 	player->smallRunAnim.frameStartTime = osGetTime();
 	player->smallRunAnim.frameLength = 20;
-	
-	player->smallLeapAnim.sprites = marioSmallLeapSprites;
-	player->smallLeapAnim.size = 1;
-	player->smallLeapAnim.frame = 0;
-	player->smallLeapAnim.frameStartTime = osGetTime();
-	player->smallLeapAnim.frameLength = 50;
 	
 	player->bigWalkAnim.sprites = marioBigWalkSprites;
 	player->bigWalkAnim.size = 4;
@@ -158,35 +128,11 @@ void initPlayer(Player* player, int x, int y) {
 	player->bigWalkAnim.frameStartTime = osGetTime();
 	player->bigWalkAnim.frameLength = 50;
 	
-	player->bigSkidAnim.sprites = marioBigSkidSprites;
-	player->bigSkidAnim.size = 1;
-	player->bigSkidAnim.frame = 0;
-	player->bigSkidAnim.frameStartTime = osGetTime();
-	player->bigSkidAnim.frameLength = 50;
-	
-	player->bigJumpAnim.sprites = marioBigJumpSprites;
-	player->bigJumpAnim.size = 1;
-	player->bigJumpAnim.frame = 0;
-	player->bigJumpAnim.frameStartTime = osGetTime();
-	player->bigJumpAnim.frameLength = 50;
-	
-	player->bigFallAnim.sprites = marioBigFallSprites;
-	player->bigFallAnim.size = 1;
-	player->bigFallAnim.frame = 0;
-	player->bigFallAnim.frameStartTime = osGetTime();
-	player->bigFallAnim.frameLength = 50;
-	
 	player->bigRunAnim.sprites = marioBigRunSprites;
 	player->bigRunAnim.size = 4;
 	player->bigRunAnim.frame = 0;
 	player->bigRunAnim.frameStartTime = osGetTime();
 	player->bigRunAnim.frameLength = 20;
-	
-	player->bigLeapAnim.sprites = marioBigLeapSprites;
-	player->bigLeapAnim.size = 1;
-	player->bigLeapAnim.frame = 0;
-	player->bigLeapAnim.frameStartTime = osGetTime();
-	player->bigLeapAnim.frameLength = 50;
 	
 	if(!player->jumpSound.allocated) {openSoundFile(&player->jumpSound, "romfs:/jump.raw", 0, 1);}
 	player->jumpSound.fileEnd = 2;
@@ -322,7 +268,15 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 				
 				if(overlap.x != 0 && overlap.y != 0) {break;}
 				
-				if(getMapValue(tilemap, xTests[i], yTests[i]) == 108 && overlap.y < 0 && overlap.x == 0) {
+				if(overlap.y < 0 && overlap.x == 0) {
+					for(int q = 0; q < MAX_OBJECTS; q++) {
+						if(questionBlocks[q].xTile == xTests[i] && questionBlocks[q].yTile == yTests[i]) {
+							startQuestionBlockBump(&questionBlocks[q]);
+						}
+					}
+				}
+				
+				/*if(getMapValue(tilemap, xTests[i], yTests[i]) == 108 && overlap.y < 0 && overlap.x == 0) {
 					setMapValue(&tilemap, xTests[i], yTests[i], -1);
 					
 					int partIndex = findFreeParticle();
@@ -330,7 +284,7 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 					
 					int mushIndex = findFreeMushroom();
 					if(mushIndex != -1) {initMushroom(&mushrooms[mushIndex], xTests[i] * 16 + 8, yTests[i] * 16);}
-				}
+				}*/
 			}
 		}
 		
@@ -357,13 +311,15 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 					else {player->state = STATE_DEATH;}
 				}
 			}
-		}
-		
-		for(int i = 0; i < MAX_OBJECTS; i++) {
 			if(mushrooms[i].exists) {
 				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getMushroomBB(&mushrooms[i]))) {
 					mushrooms[i].exists = 0;
 					player->health = 1;
+				}
+			}
+			if(piranhas[i].exists) {
+				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getPiranhaBB(&piranhas[i]))) {
+					player->state = STATE_DEATH;
 				}
 			}
 		}
@@ -439,8 +395,8 @@ void drawPlayer(Player* player, Vec2 camPos) {
 	if(player->state == STATE_LEAP && player->animation != ANIM_LEAP) {player->animation = ANIM_LEAP;}
 	
 	if(player->animation == ANIM_IDLE) {
-		if(!player->health) {drawSpriteScale(&player->smallWalkAnim.sprites[1], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
-		else {drawSpriteScale(&player->bigWalkAnim.sprites[3], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
+		if(!player->health) {drawSpriteScale(&marioSmallWalkSprites[1], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+		else {drawSpriteScale(&marioBigWalkSprites[3], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
 	}
 	if(player->animation == ANIM_WALK) {
 		if(!player->health) {drawSpriteScale(&player->smallWalkAnim.sprites[player->smallWalkAnim.frame], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
@@ -461,17 +417,17 @@ void drawPlayer(Player* player, Vec2 camPos) {
 		}
 	}
 	if(player->animation == ANIM_JUMP) {
-		if(!player->health) {drawSpriteScale(&player->smallJumpAnim.sprites[0], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
-		else {drawSpriteScale(&player->bigJumpAnim.sprites[0], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
+		if(!player->health) {drawSpriteScale(&marioSmallJumpSprite, player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+		else {drawSpriteScale(&marioBigJumpSprite, player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
 	}
 	if(player->animation == ANIM_FALL) {
-		if(!player->health) {drawSpriteScale(&player->smallJumpAnim.sprites[0], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
-		else {drawSpriteScale(&player->bigFallAnim.sprites[0], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
+		if(!player->health) {drawSpriteScale(&marioSmallJumpSprite, player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+		else {drawSpriteScale(&marioBigFallSprite, player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
 	}
-	if(player->animation == ANIM_DEATH) {drawSpriteScale(&player->smallDeathAnim.sprites[0], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+	if(player->animation == ANIM_DEATH) {drawSpriteScale(&marioSmallDeathSprite, player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
 	if(player->animation == ANIM_SKID) {
-		if(!player->health) {drawSpriteScale(&player->smallSkidAnim.sprites[0], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
-		else {drawSpriteScale(&player->bigSkidAnim.sprites[0], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
+		if(!player->health) {drawSpriteScale(&marioSmallSkidSprite, player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+		else {drawSpriteScale(&marioBigSkidSprite, player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
 	}
 	if(player->animation == ANIM_RUN) {
 		if(!player->health) {drawSpriteScale(&player->smallRunAnim.sprites[player->smallRunAnim.frame], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
@@ -489,8 +445,8 @@ void drawPlayer(Player* player, Vec2 camPos) {
 		}
 	}
 	if(player->animation == ANIM_LEAP) {
-		if(!player->health) {drawSpriteScale(&player->smallLeapAnim.sprites[0], player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
-		else {drawSpriteScale(&player->bigLeapAnim.sprites[0], player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
+		if(!player->health) {drawSpriteScale(&marioSmallLeapSprite, player->pos.x - 8 - camPos.x, player->pos.y - 16 - camPos.y, -player->facing, 1);}
+		else {drawSpriteScale(&marioBigLeapSprite, player->pos.x - 9 - camPos.x, player->pos.y - 28 - camPos.y, -player->facing, 1);}
 	}
 	
 	if(player->jumpSound.fileEnd < 2) {updateSound(&player->jumpSound);}

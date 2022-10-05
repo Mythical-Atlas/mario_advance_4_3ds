@@ -6,7 +6,7 @@
 
 typedef struct {
 	Vec2 pos;
-	C2D_Sprite* sprite;
+	Vec2 vel;
 	bool exists;
 } Shell;
 /*

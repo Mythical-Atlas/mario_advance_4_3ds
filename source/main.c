@@ -8,8 +8,9 @@
 #include "csimple.h"
 #include "audio.h"
 #include "collision.h"
-#include "player.h"
 #include "mapsHandler.h"
+#include "objectsHandler.h"
+#include "player.h"
 #include "level11.h"
 #include "goomba.h"
 #include "mushroom.h"
@@ -35,6 +36,32 @@ AudioFile deathMusic;
 int tileAnimTimer;
 int tileAnimFrame;
 
+void findObjectsInMap(Tilemap tilemap) {
+	for(int x = 0; x < tilemap.mapw; x++) {
+		for(int y = 0; y < tilemap.maph; y++) {
+			int questIndex = findFreeQuestionBlock();
+			if(questIndex != -1) {
+				if(getMapValue(tilemap, x, y) == 1) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_MUSHROOM, BLOCK_FACADE_QUESTION);
+					setMapValue(&tilemap, x, y, 108);
+				}
+				else if(getMapValue(tilemap, x, y) == 2) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_COIN, BLOCK_FACADE_QUESTION);
+					setMapValue(&tilemap, x, y, 108);
+				}
+				else if(getMapValue(tilemap, x, y) == 108) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_NOTHING, BLOCK_FACADE_QUESTION);
+					//setMapValue(&tilemap, x, y, -1);
+				}
+				else if(getMapValue(tilemap, x, y) == 154) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_NOTHING, BLOCK_FACADE_DEAD);
+					//setMapValue(&tilemap, x, y, -1);
+				}
+			}
+		}
+	}
+}
+
 int main(int argc, char* argv[]) {
 	u64 startTime = osGetTime();
 	previousFrameDuration = 17; // 60 fps is 16.67 ms per frame, so to get a nominal inital time delta, set to 16 or 17 ish
@@ -53,6 +80,7 @@ int main(int argc, char* argv[]) {
 	
 	initObjects();
 	initLevel11(&player);
+	findObjectsInMap(level11Tilemap);
 	
 	openSoundFile(&music, "romfs:/music11.raw", 0, 0);
 	openSoundFile(&deathMusic, "romfs:/death.raw", 0, 0);
@@ -72,16 +100,16 @@ int main(int argc, char* argv[]) {
 		updatePlayer(&player, level11Tilemap, previousFrameDuration);
 		camPos.x = player.pos.x - 200;
 		
-		for(int i = 0; i < MAX_OBJECTS; i++) {if(particles[i].anim.sprites == questionBlockSprites && particles[i].exists) {potentialQuestionBlocks[i] = 1;}}
+		//for(int i = 0; i < MAX_OBJECTS; i++) {if(particles[i].anim.sprites == questionBlockSprites && particles[i].exists) {potentialQuestionBlocks[i] = 1;}}
 		
 		updateObjects(previousFrameDuration);
 		
-		for(int i = 0; i < MAX_OBJECTS; i++) {
+		/*for(int i = 0; i < MAX_OBJECTS; i++) {
 			if(potentialQuestionBlocks[i] == 1 && !particles[i].exists) {
 				potentialQuestionBlocks[i] = 0;
 				setMapValue(&level11Tilemap, (int)(particles[i].pos.x / 16), (int)((particles[i].pos.y + 2) / 16), 154);
 			}
-		}
+		}*/
 		
 		if(player.state == STATE_DEATH && songIndex != SONG_DEATH) {
 			ndspChnWaveBufClear(0);
@@ -113,9 +141,9 @@ int main(int argc, char* argv[]) {
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512, 240 - 373);
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512 * 2, 240 - 373);
 		
-		drawTilemap(level11Tilemap, camPos, tileAnimFrame);
-		
 		drawObjects(camPos);
+		
+		drawTilemap(level11Tilemap, camPos, tileAnimFrame);
 		
 		drawPlayer(&player, camPos);
 		
@@ -130,6 +158,7 @@ int main(int argc, char* argv[]) {
 		else if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {
 			initObjects();
 			initLevel11(&player);
+			findObjectsInMap(level11Tilemap);
 			
 			ndspChnWaveBufClear(0);
 			ndspChnReset(0);

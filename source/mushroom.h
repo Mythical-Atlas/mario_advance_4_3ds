@@ -7,19 +7,23 @@
 
 typedef struct {
 	Vec2 pos;
-	C2D_Sprite* sprite;
 	bool exists;
+	int appearing;
 } Mushroom;
 
 void initMushroom(Mushroom* mushroom, int x, int y) {
 	mushroom->pos.x = x;
 	mushroom->pos.y = y;
 	mushroom->exists = 1;
-	
-	mushroom->sprite = &mushroomSprites[0];
+	mushroom->appearing = 16;
 }
-void updateMushroom(Mushroom* mushroom, int timeDelta) {}
-void drawMushroom(Mushroom* mushroom, Vec2 camPos) {drawSprite(mushroom->sprite, mushroom->pos.x - (int)camPos.x - 8, mushroom->pos.y - (int)camPos.y - 16);}
+void updateMushroom(Mushroom* mushroom, int timeDelta) {
+	if(mushroom->appearing > 0) {
+		mushroom->pos.y--;
+		mushroom->appearing--;
+	}
+}
+void drawMushroom(Mushroom* mushroom, Vec2 camPos) {drawSprite(&mushroomSprite, mushroom->pos.x - (int)camPos.x - 8, mushroom->pos.y - (int)camPos.y - 16);}
 
 BoundBox getMushroomBB(Mushroom* mushroom) {
 	BoundBox output;
