@@ -68,10 +68,11 @@ void initObjects() {
 	}
 }
 
-void updateObjects(int timeDelta) {
+void updateObjects(Tilemap tilemap, int timeDelta) {
 	for(int i = 0; i < MAX_OBJECTS; i++) {
 		if(questionBlocks[i].exists) {
 			updateQuestionBlock(&questionBlocks[i], timeDelta);
+			
 			if(questionBlocks[i].shouldSpawnItem) {
 				questionBlocks[i].shouldSpawnItem = 0;
 				if(questionBlocks[i].contains == BLOCK_CONTAINS_COIN) {
@@ -86,10 +87,30 @@ void updateObjects(int timeDelta) {
 			}
 		}
 		//if(coins[i].exists) {updateCoin(&coins[i], timeDelta);}
-		if(goombas[i].exists) {updateGoomba(&goombas[i], timeDelta);}
-		if(mushrooms[i].exists) {updateMushroom(&mushrooms[i], timeDelta);}
-		/*if(koopas[i].exists) {updateKoopa(&koopas[i], timeDelta);}
-		if(shells[i].exists) {updateShell(&shells[i], timeDelta);}*/
+		if(goombas[i].exists) {
+			updateGoomba(&goombas[i], tilemap, timeDelta);
+			
+			if(goombas[i].shouldSpawnSquish) {
+				goombas[i].shouldSpawnSquish = 0;
+				goombas[i].exists = 0;
+				
+				int partIndex = findFreeParticle();
+				if(partIndex != -1) {initParticle(&particles[partIndex], &goombaStompedSprite, 1, 400, goombas[i].pos.x - 8, goombas[i].pos.y - 16);}
+			}
+		}
+		if(mushrooms[i].exists) {updateMushroom(&mushrooms[i], tilemap, timeDelta);}
+		if(koopas[i].exists) {
+			updateKoopa(&koopas[i], timeDelta);
+			
+			if(koopas[i].shouldSpawnShell) {
+				koopas[i].shouldSpawnShell = 0;
+				koopas[i].exists = 0;
+				
+				int shellIndex = findFreeShell();
+				if(shellIndex != -1) {initShell(&shells[shellIndex], koopas[i].pos.x, koopas[i].pos.y);}
+			}
+		}
+		if(shells[i].exists) {updateShell(&shells[i], timeDelta);}
 		if(piranhas[i].exists) {updatePiranha(&piranhas[i], timeDelta);}
 		if(particles[i].exists) {updateParticle(&particles[i], timeDelta);}
 	}
@@ -101,8 +122,8 @@ void drawObjects(Vec2 camPos) {
 		//if(coins[i].exists) {drawCoin(&coins[i], camPos);}
 		if(goombas[i].exists) {drawGoomba(&goombas[i], camPos);}
 		if(mushrooms[i].exists) {drawMushroom(&mushrooms[i], camPos);}
-		/*if(koopas[i].exists) {drawKoopa(&koopas[i], camPos);}
-		if(shells[i].exists) {drawShell(&shells[i], camPos);}*/
+		if(koopas[i].exists) {drawKoopa(&koopas[i], camPos);}
+		if(shells[i].exists) {drawShell(&shells[i], camPos);}
 		if(piranhas[i].exists) {drawPiranha(&piranhas[i], camPos);}
 		if(particles[i].exists) {drawParticle(&particles[i], camPos);}
 	}

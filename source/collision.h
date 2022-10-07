@@ -188,4 +188,30 @@ Vec2 findSmallestOverlap(BoundBox b1, BoundBox b2, int surroundingSolids, Vec2 v
 	return output;
 }
 
+int getNumTests(int surroundingSolids) {
+	int numTestSolids = 0;
+	if((surroundingSolids &   1) ==   1) {numTestSolids++;}
+	if((surroundingSolids &   2) ==   2) {numTestSolids++;}
+	if((surroundingSolids &   4) ==   4) {numTestSolids++;}
+	if((surroundingSolids &   8) ==   8) {numTestSolids++;}
+	if((surroundingSolids &  16) ==  16) {numTestSolids++;}
+	if((surroundingSolids &  32) ==  32) {numTestSolids++;}
+	if((surroundingSolids &  64) ==  64) {numTestSolids++;}
+	if((surroundingSolids & 128) == 128) {numTestSolids++;}
+	
+	return numTestSolids;
+}
+void getTestPositions(int surroundingSolids, int numTestSolids, int* xTests, int* yTests, float x, float y) {
+	int testIndex = 0;
+	
+	if((surroundingSolids &   1) ==   1) {xTests[testIndex] = (int)(x / 16) - 1; yTests[testIndex++] = (int)(y / 16) - 1;}
+	if((surroundingSolids &   2) ==   2) {xTests[testIndex] = (int)(x / 16)    ; yTests[testIndex++] = (int)(y / 16) - 1;}
+	if((surroundingSolids &   4) ==   4) {xTests[testIndex] = (int)(x / 16) + 1; yTests[testIndex++] = (int)(y / 16) - 1;}
+	if((surroundingSolids &   8) ==   8) {xTests[testIndex] = (int)(x / 16) - 1; yTests[testIndex++] = (int)(y / 16)    ;}
+	if((surroundingSolids &  16) ==  16) {xTests[testIndex] = (int)(x / 16) + 1; yTests[testIndex++] = (int)(y / 16)    ;}
+	if((surroundingSolids &  32) ==  32) {xTests[testIndex] = (int)(x / 16) - 1; yTests[testIndex++] = (int)(y / 16) + 1;}
+	if((surroundingSolids &  64) ==  64) {xTests[testIndex] = (int)(x / 16)    ; yTests[testIndex++] = (int)(y / 16) + 1;}
+	if((surroundingSolids & 128) == 128) {xTests[testIndex] = (int)(x / 16) + 1; yTests[testIndex++] = (int)(y / 16) + 1;}
+}
+
 #endif

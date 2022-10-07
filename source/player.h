@@ -22,6 +22,10 @@
 #define GRAVITY           0.015f
 #define MAX_FALL_SPEED    0.1f
 
+#define PP_ADD    0.1f
+#define PP_REMOVE 0.1f
+#define PP_MAX    7
+
 #define STATE_IDLE  0
 #define STATE_WALK  1
 #define STATE_SKID  2
@@ -40,6 +44,11 @@
 #define ANIM_RUN   6
 #define ANIM_LEAP  7
 
+#define SMALL_COLLISION_WIDTH  12
+#define SMALL_COLLISION_HEIGHT 14
+#define BIG_COLLISION_WIDTH    12
+#define BIG_COLLISION_HEIGHT   30
+
 typedef struct {
 	Vec2 pos;
 	Vec2 vel; // measured in pixels/ms
@@ -49,7 +58,7 @@ typedef struct {
 	bool health;
 	
 	int deathTimer;
-	int pTimer;
+	float pTimer;
 	
 	int state;
 	int animation;
@@ -60,42 +69,11 @@ typedef struct {
 	Animation bigRunAnim;
 	
 	AudioFile jumpSound;
+	AudioFile stompSound;
+	AudioFile bumpSound;
+	AudioFile growSound;
+	AudioFile coinSound;
 } Player;
-
-int getNumTests(int surroundingSolids) {
-	int numTestSolids = 0;
-	if((surroundingSolids &   1) ==   1) {numTestSolids++;}
-	if((surroundingSolids &   2) ==   2) {numTestSolids++;}
-	if((surroundingSolids &   4) ==   4) {numTestSolids++;}
-	if((surroundingSolids &   8) ==   8) {numTestSolids++;}
-	if((surroundingSolids &  16) ==  16) {numTestSolids++;}
-	if((surroundingSolids &  32) ==  32) {numTestSolids++;}
-	if((surroundingSolids &  64) ==  64) {numTestSolids++;}
-	if((surroundingSolids & 128) == 128) {numTestSolids++;}
-	
-	return numTestSolids;
-}
-void getTestPositions(int surroundingSolids, int numTestSolids, int* xTests, int* yTests, Player* player) {
-	int testIndex = 0;
-	
-	if((surroundingSolids &   1) ==   1) {xTests[testIndex] = (int)(player->pos.x / 16) - 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) - 1;}
-	if((surroundingSolids &   2) ==   2) {xTests[testIndex] = (int)(player->pos.x / 16)    ; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) - 1;}
-	if((surroundingSolids &   4) ==   4) {xTests[testIndex] = (int)(player->pos.x / 16) + 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) - 1;}
-	if((surroundingSolids &   8) ==   8) {xTests[testIndex] = (int)(player->pos.x / 16) - 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16)    ;}
-	if((surroundingSolids &  16) ==  16) {xTests[testIndex] = (int)(player->pos.x / 16) + 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16)    ;}
-	if((surroundingSolids &  32) ==  32) {xTests[testIndex] = (int)(player->pos.x / 16) - 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) + 1;}
-	if((surroundingSolids &  64) ==  64) {xTests[testIndex] = (int)(player->pos.x / 16)    ; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) + 1;}
-	if((surroundingSolids & 128) == 128) {xTests[testIndex] = (int)(player->pos.x / 16) + 1; yTests[testIndex++] = (int)((player->pos.y - 8) / 16) + 1;}
-	
-	printf("\x1b[%d;%dH%i", (1 + 1), (36 + 1), getBit(surroundingSolids, 0));
-	printf("\x1b[%d;%dH%i", (1 + 1), (37 + 1), getBit(surroundingSolids, 1));
-	printf("\x1b[%d;%dH%i", (1 + 1), (38 + 1), getBit(surroundingSolids, 2));
-	printf("\x1b[%d;%dH%i", (2 + 1), (36 + 1), getBit(surroundingSolids, 3));
-	printf("\x1b[%d;%dH%i", (2 + 1), (38 + 1), getBit(surroundingSolids, 4));
-	printf("\x1b[%d;%dH%i", (3 + 1), (36 + 1), getBit(surroundingSolids, 5));
-	printf("\x1b[%d;%dH%i", (3 + 1), (37 + 1), getBit(surroundingSolids, 6));
-	printf("\x1b[%d;%dH%i", (3 + 1), (38 + 1), getBit(surroundingSolids, 7));
-}
 
 void initPlayer(Player* player, int x, int y) {
 	setVec2(&player->pos, x, y);
@@ -136,19 +114,82 @@ void initPlayer(Player* player, int x, int y) {
 	
 	if(!player->jumpSound.allocated) {openSoundFile(&player->jumpSound, "romfs:/jump.raw", 0, 1);}
 	player->jumpSound.fileEnd = 2;
+	if(!player->stompSound.allocated) {openSoundFile(&player->stompSound, "romfs:/stomp.raw", 0, 2);}
+	player->stompSound.fileEnd = 2;
+	if(!player->bumpSound.allocated) {openSoundFile(&player->bumpSound, "romfs:/bump.raw", 0, 2);}
+	player->bumpSound.fileEnd = 2;
+	if(!player->growSound.allocated) {openSoundFile(&player->growSound, "romfs:/grow.raw", 0, 2);}
+	player->growSound.fileEnd = 2;
+	if(!player->coinSound.allocated) {openSoundFile(&player->coinSound, "romfs:/coin.raw", 0, 3);}
+	player->coinSound.fileEnd = 2;
+}
+
+void playJumpSound(Player* player) {
+	ndspChnWaveBufClear(1);
+	ndspChnReset(1);
+	ndspChnSetInterp(1, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(1, SAMPLERATE);
+	ndspChnSetFormat(1, NDSP_FORMAT_STEREO_PCM16);
+	
+	player->jumpSound.fileEnd = 0;
+	playSound(&player->jumpSound);
+}
+void playStompSound(Player* player) {
+	ndspChnWaveBufClear(2);
+	ndspChnReset(2);
+	ndspChnSetInterp(2, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(2, SAMPLERATE);
+	ndspChnSetFormat(2, NDSP_FORMAT_STEREO_PCM16);
+	
+	player->stompSound.fileEnd = 0;
+	playSound(&player->stompSound);
+}
+void playBumpSound(Player* player) {
+	ndspChnWaveBufClear(2);
+	ndspChnReset(2);
+	ndspChnSetInterp(2, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(2, SAMPLERATE);
+	ndspChnSetFormat(2, NDSP_FORMAT_STEREO_PCM16);
+	
+	player->bumpSound.fileEnd = 0;
+	playSound(&player->bumpSound);
+}
+void playGrowSound(Player* player) {
+	ndspChnWaveBufClear(2);
+	ndspChnReset(2);
+	ndspChnSetInterp(2, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(2, SAMPLERATE);
+	ndspChnSetFormat(2, NDSP_FORMAT_STEREO_PCM16);
+	
+	player->growSound.fileEnd = 0;
+	playSound(&player->growSound);
+}
+void playCoinSound(Player* player) {
+	ndspChnWaveBufClear(3);
+	ndspChnReset(3);
+	ndspChnSetInterp(3, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(3, SAMPLERATE);
+	ndspChnSetFormat(3, NDSP_FORMAT_STEREO_PCM16);
+	
+	player->coinSound.fileEnd = 0;
+	playSound(&player->coinSound);
+}
+
+BoundBox getPlayerBB(Player* player) {
+	if(!player->health) {return getBB(player->pos.x - SMALL_COLLISION_WIDTH / 2.0f, player->pos.y - SMALL_COLLISION_HEIGHT, SMALL_COLLISION_WIDTH, SMALL_COLLISION_HEIGHT);}
+	else {return getBB(player->pos.x - BIG_COLLISION_WIDTH / 2.0f, player->pos.y - BIG_COLLISION_HEIGHT, BIG_COLLISION_WIDTH, BIG_COLLISION_HEIGHT);}
 }
 
 void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 	if(player->state != STATE_DEATH) {
-		int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
-		int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
-		surroundingSolids += surroundingPlatforms;
+		int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap, 200, 15);
+		int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap, 200, 15);
+		if(player->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 		
 		player->ground = false;
-		if((surroundingSolids &  32) ==  32 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y - 16, 12, 16.5f), getTileBB((int)(player->pos.x / 16) - 1, (int)((player->pos.y - 8) / 16) + 1))) {player->ground = true;}
-		if((surroundingSolids &  64) ==  64 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y - 16, 12, 16.5f), getTileBB((int)(player->pos.x / 16),     (int)((player->pos.y - 8) / 16) + 1))) {player->ground = true;}
-		if((surroundingSolids & 128) == 128 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y - 16, 12, 16.5f), getTileBB((int)(player->pos.x / 16) + 1, (int)((player->pos.y - 8) / 16) + 1))) {player->ground = true;}
-		if(player->vel.y < 0) {player->ground = false;}
+		if((surroundingSolids &  32) ==  32 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y, 12, 0.5f), getTileBB((int)(player->pos.x / 16) - 1, (int)((player->pos.y - getPlayerBB(player).h / 2) / 16) + 1))) {player->ground = true;}
+		if((surroundingSolids &  64) ==  64 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y, 12, 0.5f), getTileBB((int)(player->pos.x / 16),     (int)((player->pos.y - getPlayerBB(player).h / 2) / 16) + 1))) {player->ground = true;}
+		if((surroundingSolids & 128) == 128 && checkBBOverlap(getBB(player->pos.x - 6, player->pos.y, 12, 0.5f), getTileBB((int)(player->pos.x / 16) + 1, (int)((player->pos.y - getPlayerBB(player).h / 2) / 16) + 1))) {player->ground = true;}
 		
 		if(checkKeyHeld(KEY_LEFT) && !checkKeyHeld(KEY_RIGHT)) {
 			if(player->ground) {
@@ -212,14 +253,7 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 				if(player->state != STATE_RUN) {player->state = STATE_JUMP;}
 				else {player->state = STATE_LEAP;}
 				
-				ndspChnWaveBufClear(1);
-				ndspChnReset(1);
-				ndspChnSetInterp(1, NDSP_INTERP_LINEAR);
-				ndspChnSetRate(1, SAMPLERATE);
-				ndspChnSetFormat(1, NDSP_FORMAT_STEREO_PCM16);
-				
-				player->jumpSound.fileEnd = 0;
-				playSound(&player->jumpSound);
+				playJumpSound(player);
 			}
 			else {player->vel.y = 0;}
 		}
@@ -238,13 +272,13 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 		player->pos.x += player->vel.x * timeDelta;
 		player->pos.y += player->vel.y * timeDelta;
 		
-		surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
-		surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - 8) / 16), tilemap, 200, 15);
+		surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap, 200, 15);
+		surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap, 200, 15);
 		
 		int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 		int xTests[numTestSolids];
 		int yTests[numTestSolids];
-		getTestPositions(surroundingSolids + surroundingPlatforms, numTestSolids, xTests, yTests, player);
+		getTestPositions(surroundingSolids + surroundingPlatforms, numTestSolids, xTests, yTests, player->pos.x, player->pos.y - getPlayerBB(player).h / 2);
 		
 		// change overlap algorithm:
 		// when colliding, for each solid:
@@ -256,12 +290,12 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 		// move player along this new movement vector
 		// check for collision, and repeat if collision found
 		for(int i = 0; i < numTestSolids; i++) {
-			if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]))) {
-				Vec2 overlap = findSmallestOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+			if(checkBBOverlap(getPlayerBB(player), getTileBB(xTests[i], yTests[i]))) {
+				Vec2 overlap = findSmallestOverlap(getPlayerBB(player), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
 				
 				player->pos.x -= overlap.x;
 				player->pos.y -= overlap.y;
-				consolePrint("COLLIDE", 0, 2);
+				//consolePrint("COLLIDE", 0, 2);
 				
 				if(overlap.x != 0) {player->vel.x = 0;}
 				if(overlap.y != 0) {player->vel.y = 0;}
@@ -272,54 +306,69 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 					for(int q = 0; q < MAX_OBJECTS; q++) {
 						if(questionBlocks[q].xTile == xTests[i] && questionBlocks[q].yTile == yTests[i]) {
 							startQuestionBlockBump(&questionBlocks[q]);
+							playBumpSound(player);
+							if(questionBlocks[q].contains == BLOCK_CONTAINS_COIN) {playCoinSound(player);}
 						}
 					}
 				}
-				
-				/*if(getMapValue(tilemap, xTests[i], yTests[i]) == 108 && overlap.y < 0 && overlap.x == 0) {
-					setMapValue(&tilemap, xTests[i], yTests[i], -1);
-					
-					int partIndex = findFreeParticle();
-					if(partIndex != -1) {initParticle(&particles[partIndex], questionBlockSprites, 3, 50, xTests[i] * 16, yTests[i] * 16 - 2);}
-					
-					int mushIndex = findFreeMushroom();
-					if(mushIndex != -1) {initMushroom(&mushrooms[mushIndex], xTests[i] * 16 + 8, yTests[i] * 16);}
-				}*/
 			}
 		}
 		
-		if(getMapValue(tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y - 16) / 16)) == 129) {
-			setMapValue(&tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y - 16) / 16), -1);
+		if(getMapValue(tilemap, (int)((player->pos.x - getPlayerBB(player).w / 2) / 16), (int)((player->pos.y - getPlayerBB(player).h) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x - getPlayerBB(player).w / 2) / 16), (int)((player->pos.y - getPlayerBB(player).h) / 16), -1);
 		}
-		if(getMapValue(tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y - 16) / 16)) == 129) {
-			setMapValue(&tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y - 16) / 16), -1);
+		if(getMapValue(tilemap, (int)((player->pos.x + getPlayerBB(player).w / 2) / 16), (int)((player->pos.y - getPlayerBB(player).h) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x + getPlayerBB(player).w / 2) / 16), (int)((player->pos.y - getPlayerBB(player).h) / 16), -1);
 		}
-		if(getMapValue(tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y) / 16)) == 129) {
-			setMapValue(&tilemap, (int)((player->pos.x + 8) / 16), (int)((player->pos.y) / 16), -1);
+		if(getMapValue(tilemap, (int)((player->pos.x + getPlayerBB(player).w / 2) / 16), (int)((player->pos.y) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x + getPlayerBB(player).w / 2) / 16), (int)((player->pos.y) / 16), -1);
 		}
-		if(getMapValue(tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y) / 16)) == 129) {
-			setMapValue(&tilemap, (int)((player->pos.x - 8) / 16), (int)((player->pos.y) / 16), -1);
+		if(getMapValue(tilemap, (int)((player->pos.x - getPlayerBB(player).w / 2) / 16), (int)((player->pos.y) / 16)) == 129) {
+			setMapValue(&tilemap, (int)((player->pos.x - getPlayerBB(player).w / 2) / 16), (int)((player->pos.y) / 16), -1);
 		}
 		
 		for(int i = 0; i < MAX_OBJECTS; i++) {
 			if(goombas[i].exists) {
-				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getGoombaBB(&goombas[i]))) {
+				if(checkBBOverlap(getPlayerBB(player), getGoombaBB(&goombas[i]))) {
 					if(player->vel.y > 0) {
-						goombas[i].exists = 0;
+						goombas[i].shouldSpawnSquish = 1;
 						player->vel.y = -0.3f;
+						playStompSound(player);
 					}
 					else {player->state = STATE_DEATH;}
 				}
 			}
 			if(mushrooms[i].exists) {
-				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getMushroomBB(&mushrooms[i]))) {
+				if(checkBBOverlap(getPlayerBB(player), getMushroomBB(&mushrooms[i]))) {
 					mushrooms[i].exists = 0;
 					player->health = 1;
+					playGrowSound(player);
 				}
 			}
 			if(piranhas[i].exists) {
-				if(checkBBOverlap(getBB(player->pos.x - 8, player->pos.y - 16, 16, 16), getPiranhaBB(&piranhas[i]))) {
+				if(checkBBOverlap(getPlayerBB(player), getPiranhaBB(&piranhas[i]))) {
 					player->state = STATE_DEATH;
+				}
+			}
+			if(koopas[i].exists) {
+				if(checkBBOverlap(getPlayerBB(player), getKoopaBB(&koopas[i]))) {
+					if(player->vel.y > 0) {
+						koopas[i].shouldSpawnShell = 1;
+						player->vel.y = -0.3f;
+						playStompSound(player);
+					}
+					else {player->state = STATE_DEATH;}
+				}
+			}
+			if(shells[i].exists) {
+				if(checkBBOverlap(getPlayerBB(player), getShellBB(&shells[i]))) {
+					if(player->vel.y > 0) {
+						//shells[i].movement = something idk
+						player->vel.y = -0.3f;
+						player->pos.y -= 4;
+						playStompSound(player);
+					}
+					else {player->state = STATE_DEATH;}
 				}
 			}
 		}
@@ -328,28 +377,30 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 		if(px >= SCREEN_WIDTH - 16) {px = SCREEN_WIDTH - 16 - 1;}
 		if(py >= SCREEN_HEIGHT - 24 - 32) {py = SCREEN_HEIGHT - 24 - 32 - 1;}*/
 		
-		if(player->vel.x == 0 && player->state == STATE_WALK) {player->state = STATE_IDLE;}
-		
-		if(fabs(player->vel.x) == RUN_MAX_SPEED) {
-			player->pTimer++;
-			if(player->pTimer > 100) {
-				player->pTimer = 100;
-				if(player->ground) {player->state = STATE_RUN;}
-				else {player->state = STATE_LEAP;}
-			}
-		}
-		else {
-			player->pTimer--;
-			if(player->pTimer < 0) {player->pTimer = 0;}
+		if(player->state != STATE_DEATH) {
+			if(player->vel.x == 0 && player->state == STATE_WALK) {player->state = STATE_IDLE;}
 			
-			if(player->state == STATE_RUN && fabs(player->vel.x) > 0) {player->state = STATE_WALK;}
-			if(player->state == STATE_RUN && fabs(player->vel.x) == 0) {player->state = STATE_IDLE;}
-			//if(player->state == STATE_LEAP) {player->state = STATE_WALK;}
+			if(fabs(player->vel.x) == RUN_MAX_SPEED) {
+				player->pTimer += PP_ADD;
+				if(player->pTimer > PP_MAX) {
+					player->pTimer = PP_MAX;
+					if(player->ground) {player->state = STATE_RUN;}
+					else {player->state = STATE_LEAP;}
+				}
+			}
+			else {
+				player->pTimer -= PP_REMOVE;
+				if(player->pTimer < 0) {player->pTimer = 0;}
+				
+				if(player->state == STATE_RUN && fabs(player->vel.x) > 0) {player->state = STATE_WALK;}
+				if(player->state == STATE_RUN && fabs(player->vel.x) == 0) {player->state = STATE_IDLE;}
+				//if(player->state == STATE_LEAP) {player->state = STATE_WALK;}
+			}
 		}
 		
 		if(player->pos.y >= SCREEN_HEIGHT) {player->state = STATE_DEATH;}
 		
-		printf("\x1b[%d;%dHP Timer: %i", (3 + 1), (0 + 1), player->pTimer);
+		//printf("\x1b[%d;%dHP Timer: %i", (3 + 1), (0 + 1), player->pTimer);
 	}
 	else {
 		player->deathTimer += timeDelta;
@@ -408,12 +459,12 @@ void drawPlayer(Player* player, Vec2 camPos) {
 		if(osGetTime() - player->smallWalkAnim.frameStartTime > player->smallWalkAnim.frameLength * speedMult) {
 			player->smallWalkAnim.frame++;
 			if(player->smallWalkAnim.frame >= player->smallWalkAnim.size) {player->smallWalkAnim.frame = 0;}
-			player->smallWalkAnim.frameStartTime = osGetTime();
+			player->smallWalkAnim.frameStartTime = osGetTime();// -= player->smallWalkAnim.frameLength * speedMult;
 		}
 		if(osGetTime() - player->bigWalkAnim.frameStartTime > player->bigWalkAnim.frameLength * speedMult) {
 			player->bigWalkAnim.frame++;
 			if(player->bigWalkAnim.frame >= player->bigWalkAnim.size) {player->bigWalkAnim.frame = 0;}
-			player->bigWalkAnim.frameStartTime = osGetTime();
+			player->bigWalkAnim.frameStartTime = osGetTime();// -= player->bigWalkAnim.frameLength * speedMult;
 		}
 	}
 	if(player->animation == ANIM_JUMP) {
@@ -436,12 +487,12 @@ void drawPlayer(Player* player, Vec2 camPos) {
 		if(osGetTime() - player->smallRunAnim.frameStartTime > player->smallRunAnim.frameLength) {
 			player->smallRunAnim.frame++;
 			if(player->smallRunAnim.frame >= player->smallRunAnim.size) {player->smallRunAnim.frame = 0;}
-			player->smallRunAnim.frameStartTime = osGetTime();
+			player->smallRunAnim.frameStartTime = osGetTime();// -= player->smallRunAnim.frameLength;
 		}
 		if(osGetTime() - player->bigRunAnim.frameStartTime > player->bigRunAnim.frameLength) {
 			player->bigRunAnim.frame++;
 			if(player->bigRunAnim.frame >= player->bigRunAnim.size) {player->bigRunAnim.frame = 0;}
-			player->bigRunAnim.frameStartTime = osGetTime();
+			player->bigRunAnim.frameStartTime = osGetTime();// -= player->bigRunAnim.frameLength;
 		}
 	}
 	if(player->animation == ANIM_LEAP) {
@@ -450,6 +501,9 @@ void drawPlayer(Player* player, Vec2 camPos) {
 	}
 	
 	if(player->jumpSound.fileEnd < 2) {updateSound(&player->jumpSound);}
+	if(player->stompSound.fileEnd < 2) {updateSound(&player->stompSound);}
+	if(player->bumpSound.fileEnd < 2) {updateSound(&player->bumpSound);}
+	if(player->growSound.fileEnd < 2) {updateSound(&player->growSound);}
 }
 
 #endif

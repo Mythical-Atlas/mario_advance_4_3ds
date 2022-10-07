@@ -38,7 +38,7 @@ void initLevel11(Player* player) {
 	level11Tilemap.mapw = 200;
 	level11Tilemap.maph = 15;
 	
-	initPlayer(player, 16, 240 - 16);
+	initPlayer(player, 5 * 16, 240 - 16);
 	
 	initGoomba(&goombas[0], 14 * 16, 14 * 16);
 	initGoomba(&goombas[1], 31 * 16, 14 * 16);
@@ -46,6 +46,11 @@ void initLevel11(Player* player) {
 	initGoomba(&goombas[3], 56 * 16, 13 * 16);
 	
 	initPiranha(&piranhas[0], 23 * 16, 13 * 16);
+	initPiranha(&piranhas[1], 113 * 16, 14 * 16);
+	
+	initKoopa(&koopas[0], 36 * 16 + 8, 12 * 16);
+	initKoopa(&koopas[1], 91 * 16 + 8, 14 * 16);
+	initKoopa(&koopas[2], 131 * 16 + 8, 12 * 16);
 }
 
 #endif

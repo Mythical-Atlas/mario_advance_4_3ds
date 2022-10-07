@@ -33,11 +33,19 @@ C2D_Sprite goombaStompedSprite;
 C2D_Sprite goombaWingsSprites[2];
 C2D_Sprite koopaRedSprites[2];
 C2D_Sprite koopaWingsSprites[2];
-C2D_Sprite shellSprites[4];
+C2D_Sprite shellRedSprites[4];
 C2D_Sprite piranhaRedGreenSprites[2];
 C2D_Sprite coinCollectSprites[3];
 C2D_Sprite coinBumpSprites[19];
 C2D_Sprite questionBlockSprites[4];
+
+C2D_Sprite hudNumberSprites[20];
+C2D_Sprite hudBaseSprite;
+C2D_Sprite hudBGSprite;
+C2D_Sprite hudLogoSprite;
+C2D_Sprite ppBaseSprite;
+C2D_Sprite ppArrowSprite;
+C2D_Sprite ppSprite;
 
 void loadGraphics() {
 	imageSheet = C2D_SpriteSheetLoad("romfs:/gfx/images.t3x");
@@ -101,10 +109,10 @@ void loadGraphics() {
 	C2D_SpriteFromSheet(&koopaRedSprites[1], imageSheet, 158);
 	C2D_SpriteFromSheet(&koopaWingsSprites[0], imageSheet, 159);
 	C2D_SpriteFromSheet(&koopaWingsSprites[1], imageSheet, 160);
-	C2D_SpriteFromSheet(&shellSprites[0], imageSheet, 161);
-	C2D_SpriteFromSheet(&shellSprites[1], imageSheet, 162);
-	C2D_SpriteFromSheet(&shellSprites[2], imageSheet, 163);
-	C2D_SpriteFromSheet(&shellSprites[3], imageSheet, 164);
+	C2D_SpriteFromSheet(&shellRedSprites[0], imageSheet, 161);
+	C2D_SpriteFromSheet(&shellRedSprites[1], imageSheet, 162);
+	C2D_SpriteFromSheet(&shellRedSprites[2], imageSheet, 163);
+	C2D_SpriteFromSheet(&shellRedSprites[3], imageSheet, 164);
 	C2D_SpriteFromSheet(&piranhaRedGreenSprites[0], imageSheet, 165);
 	C2D_SpriteFromSheet(&piranhaRedGreenSprites[1], imageSheet, 166);
 	C2D_SpriteFromSheet(&coinCollectSprites[0], imageSheet, 167);
@@ -133,6 +141,33 @@ void loadGraphics() {
 	C2D_SpriteFromSheet(&questionBlockSprites[1], imageSheet, 190);
 	C2D_SpriteFromSheet(&questionBlockSprites[2], imageSheet, 191);
 	C2D_SpriteFromSheet(&questionBlockSprites[3], imageSheet, 192);
+	
+	C2D_SpriteFromSheet(&hudNumberSprites[0], imageSheet, 193);
+	C2D_SpriteFromSheet(&hudNumberSprites[1], imageSheet, 194);
+	C2D_SpriteFromSheet(&hudNumberSprites[2], imageSheet, 195);
+	C2D_SpriteFromSheet(&hudNumberSprites[3], imageSheet, 196);
+	C2D_SpriteFromSheet(&hudNumberSprites[4], imageSheet, 197);
+	C2D_SpriteFromSheet(&hudNumberSprites[5], imageSheet, 198);
+	C2D_SpriteFromSheet(&hudNumberSprites[6], imageSheet, 199);
+	C2D_SpriteFromSheet(&hudNumberSprites[7], imageSheet, 200);
+	C2D_SpriteFromSheet(&hudNumberSprites[8], imageSheet, 201);
+	C2D_SpriteFromSheet(&hudNumberSprites[9], imageSheet, 202);
+	C2D_SpriteFromSheet(&hudNumberSprites[10], imageSheet, 203);
+	C2D_SpriteFromSheet(&hudNumberSprites[11], imageSheet, 204);
+	C2D_SpriteFromSheet(&hudNumberSprites[12], imageSheet, 205);
+	C2D_SpriteFromSheet(&hudNumberSprites[13], imageSheet, 206);
+	C2D_SpriteFromSheet(&hudNumberSprites[14], imageSheet, 207);
+	C2D_SpriteFromSheet(&hudNumberSprites[15], imageSheet, 208);
+	C2D_SpriteFromSheet(&hudNumberSprites[16], imageSheet, 209);
+	C2D_SpriteFromSheet(&hudNumberSprites[17], imageSheet, 210);
+	C2D_SpriteFromSheet(&hudNumberSprites[18], imageSheet, 211);
+	C2D_SpriteFromSheet(&hudNumberSprites[19], imageSheet, 212);
+	C2D_SpriteFromSheet(&hudBaseSprite, imageSheet, 213);
+	C2D_SpriteFromSheet(&hudBGSprite, imageSheet, 214);
+	C2D_SpriteFromSheet(&hudLogoSprite, imageSheet, 215);
+	C2D_SpriteFromSheet(&ppBaseSprite, imageSheet, 216);
+	C2D_SpriteFromSheet(&ppArrowSprite, imageSheet, 217);
+	C2D_SpriteFromSheet(&ppSprite, imageSheet, 218);
 }
 
 #endif

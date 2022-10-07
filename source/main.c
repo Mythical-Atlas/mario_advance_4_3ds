@@ -10,6 +10,7 @@
 #include "collision.h"
 #include "mapsHandler.h"
 #include "objectsHandler.h"
+#include "hudHandler.h"
 #include "player.h"
 #include "level11.h"
 #include "goomba.h"
@@ -22,6 +23,7 @@
 Player player;
 
 Vec2 camPos;
+Vec2 hudBGScroll;
 
 u64 tickStartTime;
 int previousFrameDuration;
@@ -68,6 +70,8 @@ int main(int argc, char* argv[]) {
 	numLongFrames = 0;
 	lastLongLength = 0;
 	
+	setVec2(&hudBGScroll, 0, 0);
+	
 	tileAnimTimer = 0;
 	tileAnimFrame = 0;
 	
@@ -76,7 +80,7 @@ int main(int argc, char* argv[]) {
 	loadGraphics();
 
 	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
-	consoleInit(GFX_BOTTOM, NULL);
+	C3D_RenderTarget* bot = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	
 	initObjects();
 	initLevel11(&player);
@@ -99,17 +103,9 @@ int main(int argc, char* argv[]) {
 		
 		updatePlayer(&player, level11Tilemap, previousFrameDuration);
 		camPos.x = player.pos.x - 200;
+		if(camPos.x < 0) {camPos.x = 0;}
 		
-		//for(int i = 0; i < MAX_OBJECTS; i++) {if(particles[i].anim.sprites == questionBlockSprites && particles[i].exists) {potentialQuestionBlocks[i] = 1;}}
-		
-		updateObjects(previousFrameDuration);
-		
-		/*for(int i = 0; i < MAX_OBJECTS; i++) {
-			if(potentialQuestionBlocks[i] == 1 && !particles[i].exists) {
-				potentialQuestionBlocks[i] = 0;
-				setMapValue(&level11Tilemap, (int)(particles[i].pos.x / 16), (int)((particles[i].pos.y + 2) / 16), 154);
-			}
-		}*/
+		updateObjects(level11Tilemap, previousFrameDuration);
 		
 		if(player.state == STATE_DEATH && songIndex != SONG_DEATH) {
 			ndspChnWaveBufClear(0);
@@ -141,18 +137,18 @@ int main(int argc, char* argv[]) {
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512, 240 - 373);
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512 * 2, 240 - 373);
 		
-		drawObjects(camPos);
-		
 		drawTilemap(level11Tilemap, camPos, tileAnimFrame);
+		
+		drawObjects(camPos);
 		
 		drawPlayer(&player, camPos);
 		
-		C3D_FrameEnd(0);
+		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+		C2D_SceneBegin(bot);
 		
-		/*if(waveBuf[fillBlock].status == NDSP_WBUF_DONE && fileEnd == 2) {
-			// stop playing
-		}
-		else {updateSound(&music);}*/
+		drawHUD(&player, &hudBGScroll);
+		
+		C3D_FrameEnd(0);
 		
 		if(songIndex == SONG_11) {updateSound(&music);}
 		else if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {

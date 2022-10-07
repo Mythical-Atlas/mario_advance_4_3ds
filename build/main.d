@@ -119,6 +119,7 @@ main.o: C:/Users/Ben/3DS_Projects/mario/source/main.c \
  C:/Users/Ben/3DS_Projects/mario/source/koopa.h \
  C:/Users/Ben/3DS_Projects/mario/source/shell.h \
  C:/Users/Ben/3DS_Projects/mario/source/piranha.h \
+ C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h \
  C:/Users/Ben/3DS_Projects/mario/source/player.h \
  C:/Users/Ben/3DS_Projects/mario/source/level11.h
 C:/devkitPro/libctru/include/citro2d.h:
@@ -241,5 +242,6 @@ C:/Users/Ben/3DS_Projects/mario/source/particle.h:
 C:/Users/Ben/3DS_Projects/mario/source/koopa.h:
 C:/Users/Ben/3DS_Projects/mario/source/shell.h:
 C:/Users/Ben/3DS_Projects/mario/source/piranha.h:
+C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h:
 C:/Users/Ben/3DS_Projects/mario/source/player.h:
 C:/Users/Ben/3DS_Projects/mario/source/level11.h:

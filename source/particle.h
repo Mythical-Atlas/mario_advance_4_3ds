@@ -27,7 +27,7 @@ void initParticle(Particle* particle, C2D_Sprite* sprites, int size, int frameLe
 }
 void updateParticle(Particle* particle, int timeDelta) {
 	if(osGetTime() - particle->anim.frameStartTime > particle->anim.frameLength) {
-		particle->anim.frameStartTime = osGetTime();
+		particle->anim.frameStartTime -= particle->anim.frameLength;
 		particle->anim.frame++;
 		if(particle->anim.frame >= particle->anim.size) {particle->exists = 0;}
 	}
