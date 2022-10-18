@@ -1,9 +1,10 @@
 #ifndef QUESTION_BLOCK_H
 #define QUESTION_BLOCK_H
 
+#include "global.h"
 #include "csimple.h"
 #include "graphicsHandler.h"
-#include "objectsHandler.h"
+#include "objectsHolder.h"
 #include "particle.h"
 
 #define BLOCK_CONTAINS_NOTHING  0
@@ -14,27 +15,12 @@
 #define BLOCK_FACADE_QUESTION 1
 #define BLOCK_FACADE_BRICK    2
 
-typedef struct {
-	int xTile;
-	int yTile;
-	bool exists;
-	
-	int contains;
-	int facade;
-	bool bumping;
-	bool shouldSpawnItem;
-	
-	Animation anim;
-	Animation bumpAnim;
-} QuestionBlock;
-
 void initQuestionBlock(QuestionBlock* questionBlock, int xTile, int yTile, int contains, int facade) {
 	questionBlock->xTile = xTile;
 	questionBlock->yTile = yTile;
 	questionBlock->exists = 1;
 	questionBlock->contains = contains;
 	questionBlock->facade = facade;
-	questionBlock->shouldSpawnItem = false;
 	
 	questionBlock->anim.sprites = questionBlockSprites;
 	questionBlock->anim.size = 4;
@@ -70,9 +56,17 @@ void updateQuestionBlock(QuestionBlock* questionBlock, int timeDelta) {
 			if(questionBlock->bumpAnim.frame >= questionBlock->bumpAnim.size) {
 				questionBlock->bumpAnim.frame = 0;
 				questionBlock->bumping = false;
-				questionBlock->shouldSpawnItem = true;
-				
-				//questionBlock->contains = BLOCK_CONTAINS_NOTHING;
+
+				if(questionBlock->contains == BLOCK_CONTAINS_COIN) {
+					int partIndex = findFreeParticle();
+					if(partIndex != -1) {initParticle(&particles[partIndex], coinBumpSprites, 19, 20, questionBlock->xTile * 16, questionBlock->yTile * 16 - 48);}
+				}
+				if(questionBlock->contains == BLOCK_CONTAINS_MUSHROOM) {
+					int mushIndex = findFreeMushroom();
+					if(mushIndex != -1) {initMushroom(&mushrooms[mushIndex], questionBlock->xTile * 16 + 8, questionBlock->yTile * 16 + 16);}
+				}
+
+				questionBlock->contains = BLOCK_CONTAINS_NOTHING;
 				questionBlock->facade = BLOCK_FACADE_DEAD;
 			}
 		}

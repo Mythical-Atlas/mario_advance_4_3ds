@@ -106,6 +106,7 @@ main.o: C:/Users/Ben/3DS_Projects/mario/source/main.c \
  C:/devkitPro/libctru/include/c2d/sprite.h \
  C:/devkitPro/libctru/include/c2d/text.h \
  C:/devkitPro/libctru/include/c2d/font.h \
+ C:/Users/Ben/3DS_Projects/mario/source/global.h \
  C:/Users/Ben/3DS_Projects/mario/source/csimple.h \
  C:/Users/Ben/3DS_Projects/mario/source/audio.h \
  C:/Users/Ben/3DS_Projects/mario/source/collision.h \
@@ -113,12 +114,14 @@ main.o: C:/Users/Ben/3DS_Projects/mario/source/main.c \
  C:/Users/Ben/3DS_Projects/mario/source/objectsHandler.h \
  C:/Users/Ben/3DS_Projects/mario/source/goomba.h \
  C:/Users/Ben/3DS_Projects/mario/source/graphicsHandler.h \
+ C:/Users/Ben/3DS_Projects/mario/source/objectsHolder.h \
+ C:/Users/Ben/3DS_Projects/mario/source/particle.h \
  C:/Users/Ben/3DS_Projects/mario/source/mushroom.h \
  C:/Users/Ben/3DS_Projects/mario/source/questionBlock.h \
- C:/Users/Ben/3DS_Projects/mario/source/particle.h \
  C:/Users/Ben/3DS_Projects/mario/source/koopa.h \
  C:/Users/Ben/3DS_Projects/mario/source/shell.h \
  C:/Users/Ben/3DS_Projects/mario/source/piranha.h \
+ C:/Users/Ben/3DS_Projects/mario/source/coin.h \
  C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h \
  C:/Users/Ben/3DS_Projects/mario/source/player.h \
  C:/Users/Ben/3DS_Projects/mario/source/level11.h
@@ -229,6 +232,7 @@ C:/devkitPro/libctru/include/c2d/spritesheet.h:
 C:/devkitPro/libctru/include/c2d/sprite.h:
 C:/devkitPro/libctru/include/c2d/text.h:
 C:/devkitPro/libctru/include/c2d/font.h:
+C:/Users/Ben/3DS_Projects/mario/source/global.h:
 C:/Users/Ben/3DS_Projects/mario/source/csimple.h:
 C:/Users/Ben/3DS_Projects/mario/source/audio.h:
 C:/Users/Ben/3DS_Projects/mario/source/collision.h:
@@ -236,12 +240,14 @@ C:/Users/Ben/3DS_Projects/mario/source/mapsHandler.h:
 C:/Users/Ben/3DS_Projects/mario/source/objectsHandler.h:
 C:/Users/Ben/3DS_Projects/mario/source/goomba.h:
 C:/Users/Ben/3DS_Projects/mario/source/graphicsHandler.h:
+C:/Users/Ben/3DS_Projects/mario/source/objectsHolder.h:
+C:/Users/Ben/3DS_Projects/mario/source/particle.h:
 C:/Users/Ben/3DS_Projects/mario/source/mushroom.h:
 C:/Users/Ben/3DS_Projects/mario/source/questionBlock.h:
-C:/Users/Ben/3DS_Projects/mario/source/particle.h:
 C:/Users/Ben/3DS_Projects/mario/source/koopa.h:
 C:/Users/Ben/3DS_Projects/mario/source/shell.h:
 C:/Users/Ben/3DS_Projects/mario/source/piranha.h:
+C:/Users/Ben/3DS_Projects/mario/source/coin.h:
 C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h:
 C:/Users/Ben/3DS_Projects/mario/source/player.h:
 C:/Users/Ben/3DS_Projects/mario/source/level11.h:

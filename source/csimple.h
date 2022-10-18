@@ -2,29 +2,7 @@
 #define CGRAPH_H
 
 #include "audio.h"
-
-#define SCREEN_WIDTH  400
-#define SCREEN_HEIGHT 240
-
-typedef struct {
-	float x;
-	float y;
-} Vec2;
-
-typedef struct {
-	C2D_Sprite* sprites; // points to sprites loaded in main class at program start
-	int size;
-	int frame;
-	u64 frameStartTime;
-	int frameLength; // in ms
-} Animation;
-
-void setVec2(Vec2* target, float x, float y) {
-	target->x = x;
-	target->y =y;
-}
-
-bool getBit(int bits, int bit) {return (bits >> bit) & 1;}
+#include "global.h"
 
 void initLibs() {
 	romfsInit();

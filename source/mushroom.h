@@ -1,18 +1,10 @@
 #ifndef MUSHROOM_H
 #define MUSHROOM_H
 
+#include "global.h"
 #include "csimple.h"
 #include "collision.h"
 #include "graphicsHandler.h"
-
-typedef struct {
-	Vec2 pos;
-	Vec2 vel;
-	bool exists;
-	int appearing;
-	int facing;
-	bool ground;
-} Mushroom;
 
 void initMushroom(Mushroom* mushroom, int x, int y) {
 	setVec2(&mushroom->pos, x, y);

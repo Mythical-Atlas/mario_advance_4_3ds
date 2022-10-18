@@ -1,16 +1,9 @@
 #ifndef PIRANHA_H
 #define PIRANHA_H
 
+#include "global.h"
 #include "csimple.h"
 #include "collision.h"
-
-typedef struct {
-	Vec2 pos;
-	Animation anim;
-	bool exists;
-	int riseTimer;
-	int yOffset;
-} Piranha;
 
 void initPiranha(Piranha* piranha, int x, int y) {
 	piranha->pos.x = x;

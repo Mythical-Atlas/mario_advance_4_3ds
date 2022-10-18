@@ -1,6 +1,7 @@
 #ifndef LEVEL11_H
 #define LEVEL11_H
 
+#include "global.h"
 #include "csimple.h"
 #include "mapsHandler.h"
 #include "objectsHandler.h"
@@ -40,10 +41,10 @@ void initLevel11(Player* player) {
 	
 	initPlayer(player, 5 * 16, 240 - 16);
 	
-	initGoomba(&goombas[0], 14 * 16, 14 * 16);
-	initGoomba(&goombas[1], 31 * 16, 14 * 16);
-	initGoomba(&goombas[2], 53 * 16, 13 * 16);
-	initGoomba(&goombas[3], 56 * 16, 13 * 16);
+	initGoomba(&goombas[0], 14 * 16, 14 * 16, 0);
+	initGoomba(&goombas[1], 31 * 16, 14 * 16, 0);
+	initGoomba(&goombas[2], 53 * 16, 13 * 16, 0);
+	initGoomba(&goombas[3], 56 * 16, 13 * 16, 1);
 	
 	initPiranha(&piranhas[0], 23 * 16, 13 * 16);
 	initPiranha(&piranhas[1], 113 * 16, 14 * 16);

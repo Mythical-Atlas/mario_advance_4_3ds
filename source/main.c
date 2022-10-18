@@ -1,10 +1,12 @@
 #include <citro2d.h>
+#include <3ds.h>
 
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "global.h"
 #include "csimple.h"
 #include "audio.h"
 #include "collision.h"
@@ -31,6 +33,9 @@ int numLongFrames;
 int lastLongLength;
 
 int songIndex;
+
+int worldNum;
+int gameTime;
 
 AudioFile music;
 AudioFile deathMusic;
@@ -60,6 +65,14 @@ void findObjectsInMap(Tilemap tilemap) {
 					//setMapValue(&tilemap, x, y, -1);
 				}
 			}
+
+			int coinIndex = findFreeCoin();
+			if(coinIndex != -1) {
+				if(getMapValue(tilemap, x, y) == 129) {
+					initCoin(&coins[coinIndex], x, y);
+					setMapValue(&tilemap, x, y, -1);
+				}
+			}
 		}
 	}
 }
@@ -74,6 +87,9 @@ int main(int argc, char* argv[]) {
 	
 	tileAnimTimer = 0;
 	tileAnimFrame = 0;
+
+	worldNum = 1;
+	gameTime = 999;
 	
 	initLibs();
 	
@@ -101,6 +117,8 @@ int main(int argc, char* argv[]) {
 
 		if(checkKeyDown(KEY_START)) {break;}
 		
+		gameTime = 999 - (int)((osGetTime() - startTime) / 1000);
+
 		updatePlayer(&player, level11Tilemap, previousFrameDuration);
 		camPos.x = player.pos.x - 200;
 		if(camPos.x < 0) {camPos.x = 0;}
@@ -137,25 +155,32 @@ int main(int argc, char* argv[]) {
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512, 240 - 373);
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512 * 2, 240 - 373);
 		
-		drawTilemap(level11Tilemap, camPos, tileAnimFrame);
+		drawTilemapWithoutPipes(level11Tilemap, camPos, tileAnimFrame);
 		
 		drawObjects(camPos);
 		
+		drawTilemapOnlyPipes(level11Tilemap, camPos);
+
 		drawPlayer(&player, camPos);
 		
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(bot);
 		
-		drawHUD(&player, &hudBGScroll);
+		drawHUD(&player, &hudBGScroll, worldNum, gameTime);
 		
 		C3D_FrameEnd(0);
 		
 		if(songIndex == SONG_11) {updateSound(&music);}
 		else if(deathMusic.waveBuf[deathMusic.fillBlock].status == NDSP_WBUF_DONE && deathMusic.fileEnd == 2) {
+			int oldLives = player.lives;
+
 			initObjects();
 			initLevel11(&player);
 			findObjectsInMap(level11Tilemap);
 			
+			if(oldLives != 0) {player.lives = oldLives - 1;}
+			else {break;}
+
 			ndspChnWaveBufClear(0);
 			ndspChnReset(0);
 			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);

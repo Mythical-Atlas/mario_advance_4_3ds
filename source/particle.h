@@ -1,18 +1,13 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+#include "global.h"
 #include "csimple.h"
 
 // particle behavior:
 // - spawn (animation and location)
 // - play animation
 // - when animation is finished, destroy
-
-typedef struct {
-	Vec2 pos;
-	Animation anim;
-	bool exists;
-} Particle;
 
 void initParticle(Particle* particle, C2D_Sprite* sprites, int size, int frameLength, int x, int y) {
 	particle->pos.x = x;

@@ -3,6 +3,7 @@
 
 #include <citro2d.h>
 
+#include "global.h"
 #include "csimple.h"
 
 C2D_SpriteSheet imageSheet;
@@ -20,6 +21,13 @@ C2D_Sprite marioBigFallSprite;
 C2D_Sprite marioBigSkidSprite;
 C2D_Sprite marioBigRunSprites[4];
 C2D_Sprite marioBigLeapSprite;
+
+C2D_Sprite marioRacoonWalkSprites[4];
+C2D_Sprite marioRacoonJumpSprite;
+C2D_Sprite marioRacoonFallSprites[3];
+C2D_Sprite marioRacoonSkidSprite;
+C2D_Sprite marioRacoonRunSprites[4];
+C2D_Sprite marioRacoonLeapSprites[3];
 
 C2D_Sprite bgSprite;
 
@@ -46,6 +54,8 @@ C2D_Sprite hudLogoSprite;
 C2D_Sprite ppBaseSprite;
 C2D_Sprite ppArrowSprite;
 C2D_Sprite ppSprite;
+
+C2D_Sprite featherSprite;
 
 void loadGraphics() {
 	imageSheet = C2D_SpriteSheetLoad("romfs:/gfx/images.t3x");
@@ -168,6 +178,25 @@ void loadGraphics() {
 	C2D_SpriteFromSheet(&ppBaseSprite, imageSheet, 216);
 	C2D_SpriteFromSheet(&ppArrowSprite, imageSheet, 217);
 	C2D_SpriteFromSheet(&ppSprite, imageSheet, 218);
+
+	C2D_SpriteFromSheet(&featherSprite, imageSheet, 219);
+
+	C2D_SpriteFromSheet(&marioRacoonWalkSprites[0], imageSheet, 220);
+	C2D_SpriteFromSheet(&marioRacoonWalkSprites[1], imageSheet, 221);
+	C2D_SpriteFromSheet(&marioRacoonWalkSprites[2], imageSheet, 222);
+	C2D_SpriteFromSheet(&marioRacoonWalkSprites[3], imageSheet, 223);
+	C2D_SpriteFromSheet(&marioRacoonJumpSprite, imageSheet, 224);
+	C2D_SpriteFromSheet(&marioRacoonFallSprites[0], imageSheet, 225);
+	C2D_SpriteFromSheet(&marioRacoonFallSprites[1], imageSheet, 226);
+	C2D_SpriteFromSheet(&marioRacoonFallSprites[2], imageSheet, 227);
+	C2D_SpriteFromSheet(&marioRacoonSkidSprite, imageSheet, 228);
+	C2D_SpriteFromSheet(&marioRacoonRunSprites[0], imageSheet, 229);
+	C2D_SpriteFromSheet(&marioRacoonRunSprites[1], imageSheet, 230);
+	C2D_SpriteFromSheet(&marioRacoonRunSprites[2], imageSheet, 231);
+	C2D_SpriteFromSheet(&marioRacoonRunSprites[3], imageSheet, 232);
+	C2D_SpriteFromSheet(&marioRacoonLeapSprites[0], imageSheet, 233);
+	C2D_SpriteFromSheet(&marioRacoonLeapSprites[1], imageSheet, 234);
+	C2D_SpriteFromSheet(&marioRacoonLeapSprites[2], imageSheet, 235);
 }
 
 #endif

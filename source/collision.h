@@ -2,13 +2,7 @@
 #define COLLISION_H
 
 #include "mapsHandler.h"
-
-typedef struct {
-	float x;
-	float y;
-	float w;
-	float h;
-} BoundBox;
+#include "global.h"
 
 bool checkSolid(int t) {
 	return t ==  59 ||

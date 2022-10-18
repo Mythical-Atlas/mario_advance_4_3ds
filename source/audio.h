@@ -1,24 +1,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-
-#define SAMPLERATE 16000
-#define SAMPLESPERBUF SAMPLERATE
-#define BYTESPERSAMPLE 4
-
-#define BUFFER_SIZE SAMPLESPERBUF * BYTESPERSAMPLE
-
-typedef struct {
-	char inputBuffer[BUFFER_SIZE];
-	FILE* filePointer;
-	bool fillBlock;
-	u32* audioBuffer;
-	ndspWaveBuf waveBuf[2];
-	int fileEnd;
-	int numLoops;
-	bool allocated;
-	int channel;
-} AudioFile;
+#include "global.h"
 
 void fillBuffer(void* audioBuffer, char* inputBuffer, size_t size) {
 	u32* dest = (u32*)audioBuffer;
