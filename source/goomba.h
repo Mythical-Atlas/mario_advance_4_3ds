@@ -17,11 +17,7 @@ void initGoomba(Goomba* goomba, int x, int y, bool winged) {
 	goomba->winged = winged;
 	goomba->jumpTimer = 0;
 	
-	goomba->shuffleAnim.sprites = goombaSprites;
-	goomba->shuffleAnim.size = 2;
-	goomba->shuffleAnim.frame = 0;
-	goomba->shuffleAnim.frameStartTime = osGetTime();
-	goomba->shuffleAnim.frameLength = 200;
+	initAnimation(&goomba->shuffleAnim, goombaSprites, 2, 0, osGetTime(), 200);
 }
 
 void squishGoomba(Goomba* goomba) {
@@ -32,8 +28,8 @@ void squishGoomba(Goomba* goomba) {
 }
 
 void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap, 200, 15);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap, 200, 15);
+	int surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
 	if(goomba->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	bool leftLedge = 1;
@@ -68,8 +64,8 @@ void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
 	goomba->pos.x += goomba->vel.x * timeDelta;
 	goomba->pos.y += goomba->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap, 200, 15);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap, 200, 15);
+	surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -96,24 +92,8 @@ void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
 	if(goomba->jumpTimer < 0) {goomba->jumpTimer = 0;}
 }
 void drawGoomba(Goomba* goomba, Vec2 camPos) {
-	if(osGetTime() - goomba->shuffleAnim.frameStartTime > goomba->shuffleAnim.frameLength) {
-		goomba->shuffleAnim.frameStartTime = osGetTime();
-		goomba->shuffleAnim.frame++;
-		if(goomba->shuffleAnim.frame >= goomba->shuffleAnim.size) {goomba->shuffleAnim.frame = 0;}
-	}
-	
-	drawSprite(&goomba->shuffleAnim.sprites[goomba->shuffleAnim.frame], (int)goomba->pos.x - (int)camPos.x - 8, (int)goomba->pos.y - (int)camPos.y - 16);
-	if(goomba->winged) {drawSprite(&goombaWingsSprites[goomba->shuffleAnim.frame], (int)goomba->pos.x - (int)camPos.x - 10, (int)goomba->pos.y - (int)camPos.y - 24);}
-}
-
-BoundBox getGoombaBB(Goomba* goomba) {
-	BoundBox output;
-	output.x = goomba->pos.x - 6;
-	output.y = goomba->pos.y - 14;
-	output.w = 12;
-	output.h = 14;
-	
-	return output;
+	drawSprite(&goomba->shuffleAnim.sprites[getAnimFrame(goomba->shuffleAnim)], (int)goomba->pos.x - (int)camPos.x - 8, (int)goomba->pos.y - (int)camPos.y - 16);
+	if(goomba->winged) {drawSprite(&goombaWingsSprites[getAnimFrame(goomba->shuffleAnim)], (int)goomba->pos.x - (int)camPos.x - 10, (int)goomba->pos.y - (int)camPos.y - 24);}
 }
 
 #endif

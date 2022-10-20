@@ -14,6 +14,10 @@ C2D_Sprite marioSmallSkidSprite;
 C2D_Sprite marioSmallDeathSprite;
 C2D_Sprite marioSmallRunSprites[2];
 C2D_Sprite marioSmallLeapSprite;
+C2D_Sprite marioSmallWalkCarrySprites[2];
+C2D_Sprite marioSmallJumpCarrySprite;
+C2D_Sprite marioSmallKickSprite;
+C2D_Sprite marioSmallPipeSprite;
 
 C2D_Sprite marioBigWalkSprites[4];
 C2D_Sprite marioBigJumpSprite;
@@ -21,6 +25,11 @@ C2D_Sprite marioBigFallSprite;
 C2D_Sprite marioBigSkidSprite;
 C2D_Sprite marioBigRunSprites[4];
 C2D_Sprite marioBigLeapSprite;
+C2D_Sprite marioBigDuckSprite;
+C2D_Sprite marioBigWalkCarrySprites[4];
+C2D_Sprite marioBigJumpCarrySprite;
+C2D_Sprite marioBigKickSprite;
+C2D_Sprite marioBigPipeSprite;
 
 C2D_Sprite marioRacoonWalkSprites[4];
 C2D_Sprite marioRacoonJumpSprite;
@@ -28,6 +37,12 @@ C2D_Sprite marioRacoonFallSprites[3];
 C2D_Sprite marioRacoonSkidSprite;
 C2D_Sprite marioRacoonRunSprites[4];
 C2D_Sprite marioRacoonLeapSprites[3];
+C2D_Sprite marioRacoonDuckSprite;
+C2D_Sprite marioRacoonWalkCarrySprites[4];
+C2D_Sprite marioRacoonJumpCarrySprite;
+C2D_Sprite marioRacoonKickSprite;
+C2D_Sprite marioRacoonPipeSprite;
+C2D_Sprite marioRacoonSpinSprites[4];
 
 C2D_Sprite bgSprite;
 
@@ -56,6 +71,10 @@ C2D_Sprite ppArrowSprite;
 C2D_Sprite ppSprite;
 
 C2D_Sprite featherSprite;
+
+C2D_Sprite brickBlockSprites[4];
+
+C2D_Sprite lifeShroomSprite;
 
 void loadGraphics() {
 	imageSheet = C2D_SpriteSheetLoad("romfs:/gfx/images.t3x");
@@ -197,6 +216,42 @@ void loadGraphics() {
 	C2D_SpriteFromSheet(&marioRacoonLeapSprites[0], imageSheet, 233);
 	C2D_SpriteFromSheet(&marioRacoonLeapSprites[1], imageSheet, 234);
 	C2D_SpriteFromSheet(&marioRacoonLeapSprites[2], imageSheet, 235);
+
+	C2D_SpriteFromSheet(&marioSmallWalkCarrySprites[0], imageSheet, 236);
+	C2D_SpriteFromSheet(&marioSmallWalkCarrySprites[1], imageSheet, 237);
+	C2D_SpriteFromSheet(&marioSmallJumpCarrySprite, imageSheet, 238);
+	C2D_SpriteFromSheet(&marioSmallKickSprite, imageSheet, 239);
+
+	C2D_SpriteFromSheet(&marioBigDuckSprite, imageSheet, 240);
+	C2D_SpriteFromSheet(&marioBigWalkCarrySprites[0], imageSheet, 241);
+	C2D_SpriteFromSheet(&marioBigWalkCarrySprites[1], imageSheet, 242);
+	C2D_SpriteFromSheet(&marioBigWalkCarrySprites[2], imageSheet, 243);
+	C2D_SpriteFromSheet(&marioBigWalkCarrySprites[3], imageSheet, 244);
+	C2D_SpriteFromSheet(&marioBigJumpCarrySprite, imageSheet, 245);
+	C2D_SpriteFromSheet(&marioBigKickSprite, imageSheet, 246);
+
+	C2D_SpriteFromSheet(&marioRacoonDuckSprite, imageSheet, 247);
+	C2D_SpriteFromSheet(&marioRacoonWalkCarrySprites[0], imageSheet, 248);
+	C2D_SpriteFromSheet(&marioRacoonWalkCarrySprites[1], imageSheet, 249);
+	C2D_SpriteFromSheet(&marioRacoonWalkCarrySprites[2], imageSheet, 250);
+	C2D_SpriteFromSheet(&marioRacoonWalkCarrySprites[3], imageSheet, 251);
+	C2D_SpriteFromSheet(&marioRacoonJumpCarrySprite, imageSheet, 252);
+	C2D_SpriteFromSheet(&marioRacoonKickSprite, imageSheet, 253);
+
+	C2D_SpriteFromSheet(&brickBlockSprites[0], imageSheet, 254);
+	C2D_SpriteFromSheet(&brickBlockSprites[1], imageSheet, 255);
+	C2D_SpriteFromSheet(&brickBlockSprites[2], imageSheet, 256);
+	C2D_SpriteFromSheet(&brickBlockSprites[3], imageSheet, 257);
+
+	C2D_SpriteFromSheet(&marioSmallPipeSprite, imageSheet, 258);
+	C2D_SpriteFromSheet(&marioBigPipeSprite, imageSheet, 259);
+	C2D_SpriteFromSheet(&marioRacoonPipeSprite, imageSheet, 260);
+	C2D_SpriteFromSheet(&marioRacoonSpinSprites[0], imageSheet, 261);
+	C2D_SpriteFromSheet(&marioRacoonSpinSprites[1], imageSheet, 262);
+	C2D_SpriteFromSheet(&marioRacoonSpinSprites[2], imageSheet, 263);
+	C2D_SpriteFromSheet(&marioRacoonSpinSprites[3], imageSheet, 264);
+
+	C2D_SpriteFromSheet(&lifeShroomSprite, imageSheet, 265);
 }
 
 #endif

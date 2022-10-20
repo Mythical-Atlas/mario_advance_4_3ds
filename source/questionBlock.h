@@ -6,10 +6,13 @@
 #include "graphicsHandler.h"
 #include "objectsHolder.h"
 #include "particle.h"
+#include "feather.h"
 
 #define BLOCK_CONTAINS_NOTHING  0
 #define BLOCK_CONTAINS_COIN     1
 #define BLOCK_CONTAINS_MUSHROOM 2
+#define BLOCK_CONTAINS_FEATHER  3
+#define BLOCK_CONTAINS_1UP      4
 
 #define BLOCK_FACADE_DEAD     0
 #define BLOCK_FACADE_QUESTION 1
@@ -22,17 +25,8 @@ void initQuestionBlock(QuestionBlock* questionBlock, int xTile, int yTile, int c
 	questionBlock->contains = contains;
 	questionBlock->facade = facade;
 	
-	questionBlock->anim.sprites = questionBlockSprites;
-	questionBlock->anim.size = 4;
-	questionBlock->anim.frame = 0;
-	questionBlock->anim.frameStartTime = osGetTime();
-	questionBlock->anim.frameLength = 70;
-	
-	questionBlock->bumpAnim.sprites = questionBlockBumpSprites;
-	questionBlock->bumpAnim.size = 4;
-	questionBlock->bumpAnim.frame = 0;
-	questionBlock->bumpAnim.frameStartTime = osGetTime();
-	questionBlock->bumpAnim.frameLength = 20;
+	initAnimation(&questionBlock->anim, questionBlockSprites, 4, 0, osGetTime(), 70);
+	initAnimation(&questionBlock->bumpAnim, questionBlockBumpSprites, 4, 0, osGetTime(), 20);
 }
 
 void startQuestionBlockBump(QuestionBlock* questionBlock) {
@@ -64,6 +58,14 @@ void updateQuestionBlock(QuestionBlock* questionBlock, int timeDelta) {
 				if(questionBlock->contains == BLOCK_CONTAINS_MUSHROOM) {
 					int mushIndex = findFreeMushroom();
 					if(mushIndex != -1) {initMushroom(&mushrooms[mushIndex], questionBlock->xTile * 16 + 8, questionBlock->yTile * 16 + 16);}
+				}
+				if(questionBlock->contains == BLOCK_CONTAINS_FEATHER) {
+					int feathIndex = findFreeFeather();
+					if(feathIndex != -1) {initFeather(&feathers[feathIndex], questionBlock->xTile * 16 + 8, questionBlock->yTile * 16 + 16);}
+				}
+				if(questionBlock->contains == BLOCK_CONTAINS_1UP) {
+					int mushIndex = findFreeMushroom();
+					if(mushIndex != -1) {initLifeShroom(&mushrooms[mushIndex], questionBlock->xTile * 16 + 8, questionBlock->yTile * 16 + 16);}
 				}
 
 				questionBlock->contains = BLOCK_CONTAINS_NOTHING;

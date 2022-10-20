@@ -50,7 +50,26 @@ typedef struct {
 	int* map;
 	int mapw;
 	int maph;
-} Tilemap;
+} Tilemap; // replace with level
+
+typedef struct {
+	int tileX;
+	int tileY;
+	int direction;
+	int destLevel;
+	int destPipe;
+} PipeData;
+
+typedef struct {
+	C2D_Sprite* tileSprites;
+	C2D_Sprite* background;
+	Audiofile* music;
+	int* templateMap;
+	int* map;
+	int mapw;
+	int maph;
+	PipeData* pipeData
+} Level;
 
 typedef struct {
 	Vec2 pos;
@@ -61,11 +80,17 @@ typedef struct {
 	
 	int power;
 	bool canUpdraft;
+	int carrying;
+	int pipeDirection;
+	bool pipeTravel;
 
 	int deathTimer;
 	float pTimer;
 	int invincibleTimer;
 	int updraftTimer;
+	int kickTimer;
+	int spinTimer;
+	int pipeTimer;
 	
 	int state;
 	int animation;
@@ -82,6 +107,7 @@ typedef struct {
 	Animation racoonRunAnim;
 	Animation racoonFallAnim;
 	Animation racoonLeapAnim;
+	Animation racoonSpinAnim;
 	
 	AudioFile jumpSound;
 	AudioFile stompSound;
@@ -98,6 +124,8 @@ typedef struct {
 	bool ground;
 	int facing;
 	bool shouldSpawnShell;
+	bool winged;
+	int jumpTimer;
 } Koopa;
 
 typedef struct {
@@ -119,6 +147,7 @@ typedef struct {
 	int appearing;
 	int facing;
 	bool ground;
+	int floatTimer;
 } Feather;
 
 typedef struct {
@@ -160,6 +189,7 @@ typedef struct {
 	int appearing;
 	int facing;
 	bool ground;
+	bool life;
 } Mushroom;
 
 typedef struct {
@@ -176,9 +206,33 @@ typedef struct {
 	int yOffset;
 } Piranha;
 
+typedef struct {
+	int xTile;
+	int yTile;
+	bool exists;
+
+	Animation anim;
+} BrickBlock;
+
 void setVec2(Vec2* target, float x, float y) {
 	target->x = x;
 	target->y = y;
+}
+
+void initAnimation(Animation* anim, C2D_Sprite* sprites, int size, int frame, u64 frameStartTime, int frameLength) {
+	anim->sprites = sprites;
+	anim->size = size;
+	anim->frame = frame;
+	anim->frameStartTime = frameStartTime;
+	anim->frameLength = frameLength;
+}
+int getAnimFrame(Animation anim) {
+	u64 elapsedSinceStartOfAnim = osGetTime() - anim.frameStartTime;
+	u64 totalAnimationDuration = anim.frameLength * anim.size;
+	u64 timePointInAnimation = elapsedSinceStartOfAnim % totalAnimationDuration;
+	int frame = (int)(timePointInAnimation / anim.frameLength);
+
+	return frame;
 }
 
 bool getBit(int bits, int bit) {return (bits >> bit) & 1;}

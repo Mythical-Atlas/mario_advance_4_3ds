@@ -12,6 +12,7 @@ void initCoin(Coin* coin, int xTile, int yTile) {
 	coin->yTile = yTile;
 	coin->exists = 1;
 	
+	initAnimation(&coin->anim, coinSprites, 4, 0, osGetTime(), 100);
 	coin->anim.sprites = coinSprites;
 	coin->anim.size = 4;
 	coin->anim.frame = 0;

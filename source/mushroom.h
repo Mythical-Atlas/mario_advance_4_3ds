@@ -13,15 +13,26 @@ void initMushroom(Mushroom* mushroom, int x, int y) {
 	mushroom->facing = 1;
 	mushroom->ground = 1;
 	mushroom->appearing = 16;
+	mushroom->life = 0;
 }
+void initLifeShroom(Mushroom* mushroom, int x, int y) {
+	setVec2(&mushroom->pos, x, y);
+	setVec2(&mushroom->vel, 0, 0);
+	mushroom->exists = 1;
+	mushroom->facing = 1;
+	mushroom->ground = 1;
+	mushroom->appearing = 16;
+	mushroom->life = 1;
+}
+
 void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
 	if(mushroom->appearing > 0) {
 		mushroom->pos.y--;
 		mushroom->appearing--;
 	}
 	else {
-		int surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap, 200, 15);
-		int surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap, 200, 15);
+		int surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
+		int surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
 		if(mushroom->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 		
 		mushroom->ground = false;
@@ -35,8 +46,8 @@ void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
 		mushroom->pos.x += mushroom->vel.x * timeDelta;
 		mushroom->pos.y += mushroom->vel.y * timeDelta;
 		
-		surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap, 200, 15);
-		surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap, 200, 15);
+		surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
+		surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
 		int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 		int xTests[numTestSolids];
 		int yTests[numTestSolids];
@@ -60,16 +71,9 @@ void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
 		}
 	}
 }
-void drawMushroom(Mushroom* mushroom, Vec2 camPos) {drawSprite(&mushroomSprite, mushroom->pos.x - (int)camPos.x - 8, mushroom->pos.y - (int)camPos.y - 16);}
-
-BoundBox getMushroomBB(Mushroom* mushroom) {
-	BoundBox output;
-	output.x = mushroom->pos.x - 8;
-	output.y = mushroom->pos.y - 16;
-	output.w = 16;
-	output.h = 16;
-	
-	return output;
+void drawMushroom(Mushroom* mushroom, Vec2 camPos) {
+	if(!mushroom->life) {drawSprite(&mushroomSprite, mushroom->pos.x - (int)camPos.x - 8, mushroom->pos.y - (int)camPos.y - 16);}
+	else {drawSprite(&lifeShroomSprite, mushroom->pos.x - (int)camPos.x - 8, mushroom->pos.y - (int)camPos.y - 16);}
 }
 
 #endif

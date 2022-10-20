@@ -13,6 +13,8 @@
 #include "graphicsHandler.h"
 #include "objectsHolder.h"
 #include "coin.h"
+#include "feather.h"
+#include "brickBlock.h"
 
 void initObjects() {
 	for(int i = 0; i < MAX_OBJECTS; i++) {
@@ -24,6 +26,8 @@ void initObjects() {
 		shells[i].exists = 0;
 		piranhas[i].exists = 0;
 		particles[i].exists = 0;
+		feathers[i].exists = 0;
+		brickBlocks[i].exists = 0;
 	}
 }
 
@@ -36,6 +40,7 @@ void updateObjects(Tilemap tilemap, int timeDelta) {
 		if(shells[i].exists) {updateShell(&shells[i], tilemap, questionBlocks, timeDelta);}
 		if(piranhas[i].exists) {updatePiranha(&piranhas[i], timeDelta);}
 		if(particles[i].exists) {updateParticle(&particles[i], timeDelta);}
+		if(feathers[i].exists) {updateFeather(&feathers[i], tilemap, timeDelta);}
 	}
 }
 
@@ -49,6 +54,8 @@ void drawObjects(Vec2 camPos) {
 		if(shells[i].exists) {drawShell(&shells[i], camPos);}
 		if(piranhas[i].exists) {drawPiranha(&piranhas[i], camPos);}
 		if(particles[i].exists) {drawParticle(&particles[i], camPos);}
+		if(feathers[i].exists) {drawFeather(&feathers[i], camPos);}
+		if(brickBlocks[i].exists) {drawBrickBlock(&brickBlocks[i], camPos);}
 	}
 }
 

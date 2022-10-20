@@ -7,7 +7,7 @@
 #include "objectsHolder.h"
 #include "shell.h"
 
-void initKoopa(Koopa* koopa, int x, int y) {
+void initKoopa(Koopa* koopa, int x, int y, bool winged) {
 	setVec2(&koopa->pos, x, y);
 	setVec2(&koopa->vel, 0, 0);
 	koopa->pos.x = x;
@@ -16,12 +16,10 @@ void initKoopa(Koopa* koopa, int x, int y) {
 	koopa->ground = 1;
 	koopa->facing = -1;
 	koopa->shouldSpawnShell = 0;
+	koopa->winged = winged;
+	koopa->jumpTimer = 0;
 	
-	koopa->anim.sprites = koopaRedSprites;
-	koopa->anim.size = 2;
-	koopa->anim.frame = 0;
-	koopa->anim.frameStartTime = osGetTime();
-	koopa->anim.frameLength = 100;
+	initAnimation(&koopa->anim, koopaRedSprites, 2, 0, osGetTime(), 100);
 }
 
 void spawnShell(Koopa* koopa) {
@@ -31,8 +29,8 @@ void spawnShell(Koopa* koopa) {
 }
 
 void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap, 200, 15);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap, 200, 15);
+	int surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
 	if(koopa->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	bool leftLedge = 1;
@@ -48,15 +46,27 @@ void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
 	if((surroundingSolids &  64) ==  64 && checkBBOverlap(getBB(koopa->pos.x - 5, koopa->pos.y - 14, 10, 14.5f), getTileBB((int)(koopa->pos.x / 16),     (int)((koopa->pos.y - 7) / 16) + 1))) {koopa->ground = true;}
 	if((surroundingSolids & 128) == 128 && checkBBOverlap(getBB(koopa->pos.x - 5, koopa->pos.y - 14, 10, 14.5f), getTileBB((int)(koopa->pos.x / 16) + 1, (int)((koopa->pos.y - 7) / 16) + 1))) {koopa->ground = true;}
 	
+	if(leftLedge && rightLedge) {
+		leftLedge = 0;
+		rightLedge = 0;
+	}
+
 	if(koopa->facing == 1 && rightLedge) {koopa->facing = -1;}
 	else if(koopa->facing == -1 && leftLedge) {koopa->facing = 1;}
 	
 	koopa->vel.x = 0.02f * koopa->facing;
+
+	if(!koopa->ground) {koopa->vel.y += 0.005f;}
+	else if(koopa->jumpTimer == 0 && koopa->winged) {
+		koopa->jumpTimer = 1000;
+		koopa->vel.y = -0.15f;
+	}
 	
 	koopa->pos.x += koopa->vel.x * timeDelta;
+	koopa->pos.y += koopa->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap, 200, 15);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap, 200, 15);
+	surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -78,6 +88,9 @@ void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
 			if(overlap.x != 0 && overlap.y != 0) {break;}
 		}
 	}
+
+	if(koopa->ground && koopa->jumpTimer > 0) {koopa->jumpTimer -= timeDelta;}
+	if(koopa->jumpTimer < 0) {koopa->jumpTimer = 0;}
 }
 void drawKoopa(Koopa* koopa, Vec2 camPos) {
 	if(osGetTime() - koopa->anim.frameStartTime > koopa->anim.frameLength) {
@@ -87,16 +100,7 @@ void drawKoopa(Koopa* koopa, Vec2 camPos) {
 	}
 
 	drawSpriteScale(&koopa->anim.sprites[koopa->anim.frame], (int)koopa->pos.x - (int)camPos.x - 8, (int)koopa->pos.y - (int)camPos.y - 27, -koopa->facing, 1);
-}
-
-BoundBox getKoopaBB(Koopa* koopa) {
-	BoundBox output;
-	output.x = koopa->pos.x - 6;
-	output.y = koopa->pos.y - 25;
-	output.w = 12;
-	output.h = 25;
-	
-	return output;
+	if(koopa->winged) {drawSpriteScale(&koopaWingsSprites[koopa->anim.frame], (int)koopa->pos.x - (int)camPos.x - 8, (int)koopa->pos.y - (int)camPos.y - 28, -koopa->facing, 1);}
 }
 
 #endif

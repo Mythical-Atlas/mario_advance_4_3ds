@@ -14,11 +14,7 @@ void initParticle(Particle* particle, C2D_Sprite* sprites, int size, int frameLe
 	particle->pos.y = y;
 	particle->exists = 1;
 	
-	particle->anim.sprites = sprites;
-	particle->anim.size = size;
-	particle->anim.frame = 0;
-	particle->anim.frameStartTime = osGetTime();
-	particle->anim.frameLength = frameLength;
+	initAnimation(&particle->anim, sprites, size, 0, osGetTime(), frameLength);
 }
 void updateParticle(Particle* particle, int timeDelta) {
 	if(osGetTime() - particle->anim.frameStartTime > particle->anim.frameLength) {

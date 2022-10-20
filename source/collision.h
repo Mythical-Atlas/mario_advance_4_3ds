@@ -4,6 +4,11 @@
 #include "mapsHandler.h"
 #include "global.h"
 
+#define SMALL_COLLISION_WIDTH  12
+#define SMALL_COLLISION_HEIGHT 14
+#define BIG_COLLISION_WIDTH    12
+#define BIG_COLLISION_HEIGHT   30
+
 bool checkSolid(int t) {
 	return t ==  59 ||
 		   t ==  60 ||
@@ -73,6 +78,80 @@ BoundBox getTileBB(int tx, int ty) {
 	return output;
 }
 
+BoundBox getGoombaBB(Goomba* goomba) {
+	BoundBox output;
+	output.x = goomba->pos.x - 6;
+	output.y = goomba->pos.y - 14;
+	output.w = 12;
+	output.h = 14;
+	
+	return output;
+}
+
+BoundBox getPlayerBB(Player* player) { // STATE_DUCK = 8
+	if(player->power == 0 || player->state == 8) {return getBB(player->pos.x - SMALL_COLLISION_WIDTH / 2.0f, player->pos.y - SMALL_COLLISION_HEIGHT, SMALL_COLLISION_WIDTH, SMALL_COLLISION_HEIGHT);}
+	else {return getBB(player->pos.x - BIG_COLLISION_WIDTH / 2.0f, player->pos.y - BIG_COLLISION_HEIGHT, BIG_COLLISION_WIDTH, BIG_COLLISION_HEIGHT);}
+}
+
+BoundBox getShellBB(Shell* shell) {
+	BoundBox output;
+	output.x = shell->pos.x - 6;
+	output.y = shell->pos.y - 14;
+	output.w = 12;
+	output.h = 14;
+	
+	return output;
+}
+
+BoundBox getPiranhaBB(Piranha* piranha) {
+	BoundBox output;
+	output.x = piranha->pos.x - 6;
+	output.y = piranha->pos.y - 30;
+	output.w = 12;
+	output.h = 30;
+	
+	return output;
+}
+
+BoundBox getKoopaBB(Koopa* koopa) {
+	BoundBox output;
+	output.x = koopa->pos.x - 6;
+	output.y = koopa->pos.y - 25;
+	output.w = 12;
+	output.h = 25;
+	
+	return output;
+}
+
+BoundBox getMushroomBB(Mushroom* mushroom) {
+	BoundBox output;
+	output.x = mushroom->pos.x - 8;
+	output.y = mushroom->pos.y - 16;
+	output.w = 16;
+	output.h = 16;
+	
+	return output;
+}
+
+/*BoundBox getQuestionBlockBB(QuestionBlock* questionBlock) {
+	BoundBox output;
+	output.x = questionBlock->pos.x - 8;
+	output.y = questionBlock->pos.y - 16;
+	output.w = 16;
+	output.h = 16;
+	
+	return output;
+}
+BoundBox getBrickBlockBB(BrickBlock* brickBlock) {
+	BoundBox output;
+	output.x = brickBlock->pos.x - 8;
+	output.y = brickBlock->pos.y - 16;
+	output.w = 16;
+	output.h = 16;
+	
+	return output;
+}*/
+
 bool checkBBOverlap(BoundBox b1, BoundBox b2) {
 	bool xAxisOverlap = 0;
 	bool yAxisOverlap = 0;
@@ -86,8 +165,10 @@ bool checkBBOverlap(BoundBox b1, BoundBox b2) {
 	return xAxisOverlap && yAxisOverlap;
 }
 
-int checkSurroundingSolids(int x, int y, Tilemap tilemap, int w, int h) {
+int checkSurroundingSolids(int x, int y, Tilemap tilemap) {
 	int ss = 0;
+	int w = tilemap.mapw;
+	int h = tilemap.maph;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {
@@ -109,8 +190,10 @@ int checkSurroundingSolids(int x, int y, Tilemap tilemap, int w, int h) {
 	return ss;
 }
 
-int checkSurroundingPlatforms(int x, int y, Tilemap tilemap, int w, int h) {
+int checkSurroundingPlatforms(int x, int y, Tilemap tilemap) {
 	int ss = 0;
+	int w = tilemap.mapw;
+	int h = tilemap.maph;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {

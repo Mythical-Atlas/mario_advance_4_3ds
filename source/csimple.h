@@ -15,14 +15,6 @@ void initLibs() {
 	ndspInit();
 	ndspSetOutputMode(NDSP_OUTPUT_STEREO);
 	
-	ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
-	ndspChnSetRate(0, SAMPLERATE);
-	ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
-	
-	ndspChnSetInterp(1, NDSP_INTERP_LINEAR);
-	ndspChnSetRate(1, SAMPLERATE);
-	ndspChnSetFormat(1, NDSP_FORMAT_STEREO_PCM16);
-	
 	osSetSpeedupEnable(true);
 }
 

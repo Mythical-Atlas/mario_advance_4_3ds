@@ -16,6 +16,14 @@ void fillBuffer(void* audioBuffer, char* inputBuffer, size_t size) {
 	DSP_FlushDataCache(audioBuffer, size);
 }
 
+void flushChannel(int channel) {
+	ndspChnWaveBufClear(channel);
+	ndspChnReset(channel);
+	ndspChnSetInterp(channel, NDSP_INTERP_LINEAR);
+	ndspChnSetRate(channel, SAMPLERATE);
+	ndspChnSetFormat(channel, NDSP_FORMAT_STEREO_PCM16);
+}
+
 void openSoundFile(AudioFile* audioFile, char* path, int numLoops, int channel) {
 	audioFile->filePointer = fopen(path, "r");
 	if(audioFile->filePointer != NULL) {if(ferror(audioFile->filePointer) != 0) {printf("Error reading sound file");}}

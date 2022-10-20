@@ -13,6 +13,8 @@ Koopa koopas[MAX_OBJECTS];
 Shell shells[MAX_OBJECTS];
 Piranha piranhas[MAX_OBJECTS];
 Particle particles[MAX_OBJECTS];
+Feather feathers[MAX_OBJECTS];
+BrickBlock brickBlocks[MAX_OBJECTS];
 
 int findFreeQuestionBlock() {
 	for(int i = 0; i < MAX_OBJECTS; i++) {if(!questionBlocks[i].exists) {return i;}}
@@ -44,6 +46,14 @@ int findFreePiranha() {
 }
 int findFreeParticle() {
 	for(int i = 0; i < MAX_OBJECTS; i++) {if(!particles[i].exists) {return i;}}
+	return -1;
+}
+int findFreeFeather() {
+	for(int i = 0; i < MAX_OBJECTS; i++) {if(!feathers[i].exists) {return i;}}
+	return -1;
+}
+int findFreeBrickBlock() {
+	for(int i = 0; i < MAX_OBJECTS; i++) {if(!brickBlocks[i].exists) {return i;}}
 	return -1;
 }
 

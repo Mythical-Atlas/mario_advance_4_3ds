@@ -18,6 +18,7 @@
 #include "goomba.h"
 #include "mushroom.h"
 #include "particle.h"
+#include "brickBlock.h"
 
 #define SONG_11 0
 #define SONG_DEATH 1
@@ -36,6 +37,8 @@ int songIndex;
 
 int worldNum;
 int gameTime;
+
+bool insidePipe;
 
 AudioFile music;
 AudioFile deathMusic;
@@ -56,6 +59,18 @@ void findObjectsInMap(Tilemap tilemap) {
 					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_COIN, BLOCK_FACADE_QUESTION);
 					setMapValue(&tilemap, x, y, 108);
 				}
+				else if(getMapValue(tilemap, x, y) == 3) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_FEATHER, BLOCK_FACADE_QUESTION);
+					setMapValue(&tilemap, x, y, 108);
+				}
+				else if(getMapValue(tilemap, x, y) == 4) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_1UP, BLOCK_FACADE_QUESTION);
+					setMapValue(&tilemap, x, y, 108);
+				}
+				else if(getMapValue(tilemap, x, y) == 22) {
+					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_1UP, BLOCK_FACADE_BRICK);
+					setMapValue(&tilemap, x, y, 108);
+				}
 				else if(getMapValue(tilemap, x, y) == 108) {
 					initQuestionBlock(&questionBlocks[questIndex], x, y, BLOCK_CONTAINS_NOTHING, BLOCK_FACADE_QUESTION);
 					//setMapValue(&tilemap, x, y, -1);
@@ -71,6 +86,14 @@ void findObjectsInMap(Tilemap tilemap) {
 				if(getMapValue(tilemap, x, y) == 129) {
 					initCoin(&coins[coinIndex], x, y);
 					setMapValue(&tilemap, x, y, -1);
+				}
+			}
+
+			int brickIndex = findFreeBrickBlock();
+			if(brickIndex != -1) {
+				if(getMapValue(tilemap, x, y) == 171) {
+					initBrickBlock(&brickBlocks[brickIndex], x, y);
+					//setMapValue(&tilemap, x, y, 171);
 				}
 			}
 		}
@@ -90,6 +113,8 @@ int main(int argc, char* argv[]) {
 
 	worldNum = 1;
 	gameTime = 999;
+
+	insidePipe = 0;
 	
 	initLibs();
 	
@@ -107,6 +132,7 @@ int main(int argc, char* argv[]) {
 	
 	songIndex = SONG_11;
 	
+	flushChannel(0);
 	playSound(&music);
 
 	while(aptMainLoop()) {
@@ -119,19 +145,35 @@ int main(int argc, char* argv[]) {
 		
 		gameTime = 999 - (int)((osGetTime() - startTime) / 1000);
 
-		updatePlayer(&player, level11Tilemap, previousFrameDuration);
+		if(player.pipeTravel) {
+			if(!insidePipe) {
+				insidePipe = 1;
+				initObjects();
+				initLevel11Pipe(&player);
+				findObjectsInMap(level11PipeTilemap);
+			}
+			else {
+				insidePipe = 0;
+				initObjects();
+				initLevel11(&player);
+				findObjectsInMap(level11Tilemap);
+			}
+		}
+
+		if(!insidePipe) {updatePlayer(&player, level11Tilemap, previousFrameDuration);}
+		else {updatePlayer(&player, level11PipeTilemap, previousFrameDuration);}
 		camPos.x = player.pos.x - 200;
 		if(camPos.x < 0) {camPos.x = 0;}
+		if(camPos.x > level11Tilemap.mapw * 16 - SCREEN_WIDTH) {camPos.x = level11Tilemap.mapw * 16 - SCREEN_WIDTH;}
+		camPos.y = player.pos.y - SCREEN_HEIGHT / 2;
+		if(camPos.y < 0) {camPos.y = 0;}
+		if(camPos.y > level11Tilemap.maph * 16 - SCREEN_HEIGHT) {camPos.y = level11Tilemap.maph * 16 - SCREEN_HEIGHT;}
 		
-		updateObjects(level11Tilemap, previousFrameDuration);
+		if(!insidePipe) {updateObjects(level11Tilemap, previousFrameDuration);}
+		else {updateObjects(level11PipeTilemap, previousFrameDuration);}
 		
 		if(player.state == STATE_DEATH && songIndex != SONG_DEATH) {
-			ndspChnWaveBufClear(0);
-			ndspChnReset(0);
-			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
-			ndspChnSetRate(0, SAMPLERATE);
-			ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
-	
+			flushChannel(0);
 			deathMusic.fileEnd = 0;
 			playSound(&deathMusic);
 			songIndex = SONG_DEATH;
@@ -155,13 +197,15 @@ int main(int argc, char* argv[]) {
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512, 240 - 373);
 		drawSprite(&bgSprite, -(((int)camPos.x / 2) % 512) + 512 * 2, 240 - 373);
 		
-		drawTilemapWithoutPipes(level11Tilemap, camPos, tileAnimFrame);
+		if(!insidePipe) {drawTilemapWithoutPipes(level11Tilemap, camPos, tileAnimFrame);}
+		else {drawTilemapWithoutPipes(level11PipeTilemap, camPos, tileAnimFrame);}
 		
 		drawObjects(camPos);
 		
-		drawTilemapOnlyPipes(level11Tilemap, camPos);
-
 		drawPlayer(&player, camPos);
+
+		if(!insidePipe) {drawTilemapOnlyPipes(level11Tilemap, camPos);}
+		else {drawTilemapOnlyPipes(level11PipeTilemap, camPos);}
 		
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(bot);
@@ -181,11 +225,7 @@ int main(int argc, char* argv[]) {
 			if(oldLives != 0) {player.lives = oldLives - 1;}
 			else {break;}
 
-			ndspChnWaveBufClear(0);
-			ndspChnReset(0);
-			ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
-			ndspChnSetRate(0, SAMPLERATE);
-			ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+			flushChannel(0);
 			
 			playSound(&music);
 			songIndex = SONG_11;

@@ -6,6 +6,8 @@
 #include "collision.h"
 #include "questionBlock.h"
 #include "goomba.h"
+#include "audio.h"
+#include "brickBlock.h"
 
 #define MAX_OBJECTS 40
 
@@ -22,11 +24,7 @@ void initShell(Shell* shell, int x, int y) {
 	shell->ground = 1;
 	shell->moving = 0;
 	
-	shell->anim.sprites = shellRedSprites;
-	shell->anim.size = 4;
-	shell->anim.frame = 0;
-	shell->anim.frameStartTime = osGetTime();
-	shell->anim.frameLength = 100;
+	initAnimation(&shell->anim, shellRedSprites, 4, 0, osGetTime(), 100);
 
 	if(!shell->stompSound.allocated) {openSoundFile(&shell->stompSound, "romfs:/stomp.raw", 0, 2);}
 	shell->stompSound.fileEnd = 2;
@@ -37,49 +35,24 @@ void initShell(Shell* shell, int x, int y) {
 }
 
 void playShellStompSound(Shell* shell) {
-	ndspChnWaveBufClear(2);
-	ndspChnReset(2);
-	ndspChnSetInterp(2, NDSP_INTERP_LINEAR);
-	ndspChnSetRate(2, SAMPLERATE);
-	ndspChnSetFormat(2, NDSP_FORMAT_STEREO_PCM16);
-	
+	flushChannel(2);
 	shell->stompSound.fileEnd = 0;
 	playSound(&shell->stompSound);
 }
 void playShellBumpSound(Shell* shell) {
-	ndspChnWaveBufClear(2);
-	ndspChnReset(2);
-	ndspChnSetInterp(2, NDSP_INTERP_LINEAR);
-	ndspChnSetRate(2, SAMPLERATE);
-	ndspChnSetFormat(2, NDSP_FORMAT_STEREO_PCM16);
-	
+	flushChannel(2);
 	shell->bumpSound.fileEnd = 0;
 	playSound(&shell->bumpSound);
 }
 void playShellCoinSound(Shell* shell) {
-	ndspChnWaveBufClear(3);
-	ndspChnReset(3);
-	ndspChnSetInterp(3, NDSP_INTERP_LINEAR);
-	ndspChnSetRate(3, SAMPLERATE);
-	ndspChnSetFormat(3, NDSP_FORMAT_STEREO_PCM16);
-	
+	flushChannel(3);
 	shell->coinSound.fileEnd = 0;
 	playSound(&shell->coinSound);
 }
 
-BoundBox getShellBB(Shell* shell) {
-	BoundBox output;
-	output.x = shell->pos.x - 6;
-	output.y = shell->pos.y - 14;
-	output.w = 12;
-	output.h = 14;
-	
-	return output;
-}
-
 void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap, 200, 15);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap, 200, 15);
+	int surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
 	if(shell->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	//bool leftLedge = 1;
@@ -106,8 +79,8 @@ void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, i
 	shell->pos.x += shell->vel.x * timeDelta;
 	shell->pos.y += shell->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap, 200, 15);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap, 200, 15);
+	surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -128,10 +101,15 @@ void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, i
 			
 			if(overlap.y == 0 && overlap.x != 0) {
 				for(int q = 0; q < MAX_OBJECTS; q++) {
-					if(questionBlocks[q].xTile == xTests[i] && questionBlocks[q].yTile == yTests[i]) {
+					if(questionBlocks[q].exists && questionBlocks[q].xTile == xTests[i] && questionBlocks[q].yTile == yTests[i]) {
 						startQuestionBlockBump(&questionBlocks[q]);
 						playShellBumpSound(shell);
 						if(questionBlocks[q].contains == BLOCK_CONTAINS_COIN) {playShellCoinSound(shell);}
+					}
+					if(brickBlocks[q].exists && brickBlocks[q].xTile == xTests[i] && brickBlocks[q].yTile == yTests[i]) {
+						destroyBrickBlock(&brickBlocks[q]);
+						setMapValue(&tilemap, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
+						playShellBumpSound(shell);
 					}
 				}
 			}
