@@ -152,6 +152,24 @@ BoundBox getBrickBlockBB(BrickBlock* brickBlock) {
 	return output;
 }*/
 
+BoundBox getPipeEntranceBB(PipeEntrance* pipeEntrance) {
+	BoundBox output;
+	if(pipeEntrance->direction == -1) {
+		output.x = pipeEntrance->xTile * 16 - 16;
+		output.y = pipeEntrance->yTile * 16;
+		output.w = 32;
+		output.h = 16;
+	}
+	else if(pipeEntrance->direction == 1) {
+		output.x = pipeEntrance->xTile * 16 - 16;
+		output.y = pipeEntrance->yTile * 16 - 16;
+		output.w = 32;
+		output.h = 16;
+	}
+	
+	return output;
+}
+
 bool checkBBOverlap(BoundBox b1, BoundBox b2) {
 	bool xAxisOverlap = 0;
 	bool yAxisOverlap = 0;
@@ -165,15 +183,15 @@ bool checkBBOverlap(BoundBox b1, BoundBox b2) {
 	return xAxisOverlap && yAxisOverlap;
 }
 
-int checkSurroundingSolids(int x, int y, Tilemap tilemap) {
+int checkSurroundingSolids(int x, int y, Level* level) {
 	int ss = 0;
-	int w = tilemap.mapw;
-	int h = tilemap.maph;
+	int w = level->mapw;
+	int h = level->maph;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {
 			if(x + ix >= 0 && x + ix < w && y + iy >= 0 && y + iy < h) {
-				if(checkSolid(getMapValue(tilemap, x + ix, y + iy))) {
+				if(checkSolid(getMapValue(level, x + ix, y + iy))) {
 					if(ix == -1 && iy == -1) {ss += 0b00000001;}
 					if(ix ==  0 && iy == -1) {ss += 0b00000010;}
 					if(ix ==  1 && iy == -1) {ss += 0b00000100;}
@@ -190,15 +208,15 @@ int checkSurroundingSolids(int x, int y, Tilemap tilemap) {
 	return ss;
 }
 
-int checkSurroundingPlatforms(int x, int y, Tilemap tilemap) {
+int checkSurroundingPlatforms(int x, int y, Level* level) {
 	int ss = 0;
-	int w = tilemap.mapw;
-	int h = tilemap.maph;
+	int w = level->mapw;
+	int h = level->maph;
 	
 	for(int ix = -1; ix < 2; ix++) {
 		for(int iy = -1; iy < 2; iy++) {
 			if(x + ix >= 0 && x + ix < w && y + iy >= 0 && y + iy < h) {
-				if(checkPlatform(getMapValue(tilemap, x + ix, y + iy)) && y + iy >= y && iy != -1 && !(ix != 0 && ix == 0)) {
+				if(checkPlatform(getMapValue(level, x + ix, y + iy)) && y + iy >= y && iy != -1 && !(ix != 0 && ix == 0)) {
 					if(ix == -1 && iy == -1) {ss += 0b00000001;}
 					if(ix ==  0 && iy == -1) {ss += 0b00000010;}
 					if(ix ==  1 && iy == -1) {ss += 0b00000100;}

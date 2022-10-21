@@ -27,9 +27,9 @@ void squishGoomba(Goomba* goomba) {
 	if(partIndex != -1) {initParticle(&particles[partIndex], &goombaStompedSprite, 1, 400, goomba->pos.x - 8, goomba->pos.y - 16);}
 }
 
-void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
+void updateGoomba(Goomba* goomba, Level* level, int timeDelta) {
+	int surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), level);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), level);
 	if(goomba->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	bool leftLedge = 1;
@@ -64,8 +64,8 @@ void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
 	goomba->pos.x += goomba->vel.x * timeDelta;
 	goomba->pos.y += goomba->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), tilemap);
+	surroundingSolids = checkSurroundingSolids((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), level);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(goomba->pos.x / 16), (int)((goomba->pos.y - 7) / 16), level);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -73,7 +73,7 @@ void updateGoomba(Goomba* goomba, Tilemap tilemap, int timeDelta) {
 	
 	for(int i = 0; i < numTestSolids; i++) {
 		if(checkBBOverlap(getBB(goomba->pos.x - 6, goomba->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]))) {
-			Vec2 overlap = findSmallestOverlap(getBB(goomba->pos.x - 6, goomba->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, goomba->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+			Vec2 overlap = findSmallestOverlap(getBB(goomba->pos.x - 6, goomba->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, goomba->vel, checkPlatform(getMapValue(level, xTests[i], yTests[i])));
 			
 			goomba->pos.x -= overlap.x;
 			goomba->pos.y -= overlap.y;

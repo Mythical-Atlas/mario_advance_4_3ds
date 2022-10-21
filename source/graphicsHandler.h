@@ -44,7 +44,7 @@ C2D_Sprite marioRacoonKickSprite;
 C2D_Sprite marioRacoonPipeSprite;
 C2D_Sprite marioRacoonSpinSprites[4];
 
-C2D_Sprite bgSprite;
+C2D_Sprite world11BGSprite;
 
 C2D_Sprite tileSprites[231];
 
@@ -102,7 +102,7 @@ void loadGraphics() {
 	C2D_SpriteFromSheet(&marioBigRunSprites[3], imageSheet, 18);
 	C2D_SpriteFromSheet(&marioBigLeapSprite, imageSheet, 19);
 	
-	C2D_SpriteFromSheet(&bgSprite, imageSheet, 20);
+	C2D_SpriteFromSheet(&world11BGSprite, imageSheet, 20);
 	
 	int tileImageIndex = 21;
 	for(int i =   7; i <=  16; i++) {C2D_SpriteFromSheet(&tileSprites[i], imageSheet, tileImageIndex++);}

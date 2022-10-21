@@ -34,7 +34,8 @@ void initPlayer(Player* player, int x, int y) {
 	player->power = 0;
 	player->canUpdraft = 0;
 	player->pipeDirection = 0;
-	player->pipeTravel = 0;
+	player->shouldPipeTravel = 0;
+	player->pipeIndex = 0;
 
 	player->deathTimer = 0;
 	player->pTimer = 0;
@@ -75,20 +76,20 @@ void initPlayer(Player* player, int x, int y) {
 	player->coinSound.fileEnd = 2;
 }
 
-void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
+void updatePlayer(Player* player, Level* level, int timeDelta) {
 	if(player->state != STATE_DEATH && player->state != STATE_PIPE) {
-        checkPlayerGround(player, tilemap);
+        checkPlayerGround(player, level);
 
         resetPlayerFromKick(player);
 
-		handlePlayerPipe(player, tilemap);
+		handlePlayerPipe(player, level);
 
 		if(player->state != STATE_PIPE) {
 			handlePlayerDuck(player);
 
 			handlePlayerCarry(player);
 
-			handlePlayerSpin(player, tilemap);
+			handlePlayerSpin(player, level);
 
 			handlePlayerMovement(player);
 
@@ -106,7 +107,7 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 				player->vel.x = 0;
 			}
 			
-			handlePlayerCollision(player, tilemap);
+			handlePlayerCollision(player, level);
 			
 			handlePlayerObjectInteractions(player, timeDelta);
 			
@@ -131,7 +132,7 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 				}
 			}
 			
-			if(player->pos.y > tilemap.maph * tilemap.tileh) {
+			if(player->pos.y > level->maph * 16) {
 				player->state = STATE_DEATH;
 				player->invincibleTimer = 0;
 			}
@@ -153,7 +154,7 @@ void updatePlayer(Player* player, Tilemap tilemap, int timeDelta) {
 	}
 	else if(player->state == STATE_PIPE) {
 		player->pipeTimer += timeDelta;
-		if(player->pipeTimer >= 1300) {player->pipeTravel = 1;}
+		if(player->pipeTimer >= 1300) {player->shouldPipeTravel = 1;}
 	}
 	else if(player->state == STATE_DEATH) {
 		player->deathTimer += timeDelta;

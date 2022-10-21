@@ -98,9 +98,9 @@ void playerTakeDamage(Player* player) {
     else if(player->invincibleTimer == 0) {player->state = STATE_DEATH;}
 }
 
-void checkPlayerGround(Player* player, Tilemap tilemap) {
-    int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap);
-    int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap);
+void checkPlayerGround(Player* player, Level* level) {
+    int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), level);
+    int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), level);
     if(player->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
     
     player->ground = false;
@@ -123,32 +123,28 @@ void resetPlayerFromKick(Player* player) {
     }
 }
 
-void handlePlayerPipe(Player* player, Tilemap tilemap) {
+void handlePlayerPipe(Player* player, Level* level) {
     if(player->state != STATE_DUCK) {
-        int belowTileX = (int)(player->pos.x / 16);
-        int belowTileY = (int)((player->pos.y + 8) / 16);
-        int aboveTileX = belowTileX;
-        int aboveTileY = (int)((player->pos.y - 24) / 16);
-
-        if(checkKeyHeld(KEY_DOWN) && player->ground && (
-            getMapValue(tilemap, belowTileX, belowTileY) == 59 ||
-            getMapValue(tilemap, belowTileX, belowTileY) == 60
-        )) {
-            player->state = STATE_PIPE;
-            player->pipeDirection = 1;
-            if(getMapValue(tilemap, belowTileX, belowTileY) == 59) {player->pos.x = belowTileX * 16 + 16;}
-            if(getMapValue(tilemap, belowTileX, belowTileY) == 60) {player->pos.x = belowTileX * 16;}
-            player->pos.y = belowTileY * 16;
-        }
-        if(checkKeyHeld(KEY_UP) && (
-            getMapValue(tilemap, aboveTileX, aboveTileY) == 59 ||
-            getMapValue(tilemap, aboveTileX, aboveTileY) == 60
-        )) {
-            player->state = STATE_PIPE;
-            player->pipeDirection = -1;
-            if(getMapValue(tilemap, aboveTileX, aboveTileY) == 59) {player->pos.x = aboveTileX * 16 + 16;}
-            if(getMapValue(tilemap, aboveTileX, aboveTileY) == 60) {player->pos.x = aboveTileX * 16;}
-            player->pos.y = aboveTileY * 16 + 32;
+        for(int p = 0; p < MAX_OBJECTS; p++) {
+            if(pipeEntrances[p].exists) {
+                if(checkBBOverlap(getPlayerBB(player), getPipeEntranceBB(&pipeEntrances[p]))) {
+                    if(checkKeyHeld(KEY_DOWN) && player->ground && pipeEntrances[p].direction == 1) {
+                        player->state = STATE_PIPE;
+                        player->pipeDirection = 1;
+                        player->pos.x = pipeEntrances[p].xTile * 16;
+                        player->pos.y = pipeEntrances[p].yTile * 16;
+                        player->pipeIndex = p;
+                    }
+                    if(checkKeyHeld(KEY_UP) && pipeEntrances[p].direction == -1) {
+                        player->state = STATE_PIPE;
+                        player->pipeDirection = -1;
+                        player->pos.x = pipeEntrances[p].xTile * 16;
+                        if(player->power == 0) {player->pos.y = pipeEntrances[p].yTile * 16 + 16;}
+                        else {player->pos.y = pipeEntrances[p].yTile * 16 + 32;}
+                        player->pipeIndex = p;
+                    }
+                }
+            }
         }
     }
 }
@@ -195,7 +191,7 @@ void handlePlayerCarry(Player* player) {
     }
 }
 
-void handlePlayerSpin(Player* player, Tilemap tilemap) {
+void handlePlayerSpin(Player* player, Level* level) {
     if(player->state != STATE_DUCK && player->state != STATE_KICK) {
         if(player->state == STATE_SPIN) {
             /*if(player->vel.x >= -WALK_ACCEL / 2.0f && player->vel.x <= WALK_ACCEL / 2.0f) {player->vel.x = 0;}
@@ -232,7 +228,7 @@ void handlePlayerSpin(Player* player, Tilemap tilemap) {
                     if(brickBlocks[q].exists && brickBlocks[q].xTile == (int)((player->pos.x + 16 * player->facing) / 16) && brickBlocks[q].yTile == (int)((player->pos.y - 8) / 16)) {
                         if(player->power > 0) {
                             destroyBrickBlock(&brickBlocks[q]);
-                            setMapValue(&tilemap, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
+                            setMapValue(level, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
                         }
                         playBumpSound(player);
                     }
@@ -383,9 +379,9 @@ void handlePlayerUpdraft(Player* player) {
     }
 }
 
-void handlePlayerCollision(Player* player, Tilemap tilemap) {
-    int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap);
-    int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), tilemap);
+void handlePlayerCollision(Player* player, Level* level) {
+    int surroundingSolids = checkSurroundingSolids((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), level);
+    int surroundingPlatforms = checkSurroundingPlatforms((int)(player->pos.x / 16), (int)((player->pos.y - getPlayerBB(player).h / 2) / 16), level);
     
     int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
     int xTests[numTestSolids];
@@ -403,7 +399,7 @@ void handlePlayerCollision(Player* player, Tilemap tilemap) {
     // check for collision, and repeat if collision found
     for(int i = 0; i < numTestSolids; i++) {
         if(checkBBOverlap(getPlayerBB(player), getTileBB(xTests[i], yTests[i]))) {
-            Vec2 overlap = findSmallestOverlap(getPlayerBB(player), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+            Vec2 overlap = findSmallestOverlap(getPlayerBB(player), getTileBB(xTests[i], yTests[i]), surroundingSolids, player->vel, checkPlatform(getMapValue(level, xTests[i], yTests[i])));
             
             player->pos.x -= overlap.x;
             player->pos.y -= overlap.y;
@@ -428,7 +424,7 @@ void handlePlayerCollision(Player* player, Tilemap tilemap) {
                     if(brickBlocks[q].exists && brickBlocks[q].xTile == xTests[i] && brickBlocks[q].yTile == yTests[i]) {
                         if(player->power > 0) {
                             destroyBrickBlock(&brickBlocks[q]);
-                            setMapValue(&tilemap, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
+                            setMapValue(level, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
                         }
                         playBumpSound(player);
                     }

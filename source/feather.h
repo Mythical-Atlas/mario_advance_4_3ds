@@ -15,7 +15,7 @@ void initFeather(Feather* feather, int x, int y) {
 	feather->appearing = 16;
 	feather->floatTimer = 0;
 }
-void updateFeather(Feather* feather, Tilemap tilemap, int timeDelta) {
+void updateFeather(Feather* feather, Level* level, int timeDelta) {
 	if(feather->appearing > 0) {
 		feather->pos.y--;
 		feather->appearing--;
@@ -27,7 +27,7 @@ void updateFeather(Feather* feather, Tilemap tilemap, int timeDelta) {
 		feather->pos.x += feather->vel.x * timeDelta;
 		feather->pos.y += feather->vel.y * timeDelta;
 
-		if(feather->pos.y - 16 > tilemap.maph * tilemap.tileh) {feather->exists = 0;}
+		if(feather->pos.y - 16 > level->maph * 16) {feather->exists = 0;}
 
 		feather->floatTimer += timeDelta;
 	}

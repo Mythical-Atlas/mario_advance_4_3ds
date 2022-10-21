@@ -28,9 +28,9 @@ void spawnShell(Koopa* koopa) {
 	if(shellIndex != -1) {initShell(&shells[shellIndex], koopa->pos.x, koopa->pos.y);}
 }
 
-void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
+void updateKoopa(Koopa* koopa, Level* level, int timeDelta) {
+	int surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), level);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), level);
 	if(koopa->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	bool leftLedge = 1;
@@ -65,8 +65,8 @@ void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
 	koopa->pos.x += koopa->vel.x * timeDelta;
 	koopa->pos.y += koopa->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), tilemap);
+	surroundingSolids = checkSurroundingSolids((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), level);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(koopa->pos.x / 16), (int)((koopa->pos.y - 7) / 16), level);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -74,7 +74,7 @@ void updateKoopa(Koopa* koopa, Tilemap tilemap, int timeDelta) {
 	
 	for(int i = 0; i < numTestSolids; i++) {
 		if(checkBBOverlap(getBB(koopa->pos.x - 6, koopa->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]))) {
-			Vec2 overlap = findSmallestOverlap(getBB(koopa->pos.x - 6, koopa->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, koopa->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+			Vec2 overlap = findSmallestOverlap(getBB(koopa->pos.x - 6, koopa->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, koopa->vel, checkPlatform(getMapValue(level, xTests[i], yTests[i])));
 			
 			koopa->pos.x -= overlap.x;
 			koopa->pos.y -= overlap.y;

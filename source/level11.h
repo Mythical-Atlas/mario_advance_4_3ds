@@ -8,8 +8,10 @@
 #include "mapsHandler.h"
 #include "graphicsHandler.h"
 
-Tilemap level11Tilemap;
-Tilemap level11PipeTilemap;
+Level world11Level;
+Level world11Pipe0Level;
+
+AudioFile world11Music;
 
 int map11[181 * 22];
 int baseMap11[181 * 22] = {
@@ -52,16 +54,20 @@ int baseMap11Pipe[18 * 11] = {
 	181,178,178,178,178,178,178,178,178,180,199,199,199,199,199,199,199,199
 };
 
-void initLevel11(Player* player) {
+Level* initWorld11(Player* player) {
 	for(int i = 0; i < 181 * 22; i++) {map11[i] = baseMap11[i];}
 	
-	level11Tilemap.tileSprites = tileSprites;
-	level11Tilemap.tilew = 16;
-	level11Tilemap.tileh = 16;
-	level11Tilemap.map = &map11[0];
-	level11Tilemap.mapw = 181;
-	level11Tilemap.maph = 22;
+	openSoundFile(&world11Music, "romfs:/music11.raw", 0, 0);
+
+	world11Level.levelID = LEVEL_11;
+	world11Level.tileSprites = tileSprites;
+	world11Level.background = &world11BGSprite;
+	world11Level.music = &world11Music;
+	world11Level.map = &map11[0];
+	world11Level.mapw = 181;
+	world11Level.maph = 22;
 	
+	initObjects();
 	initPlayer(player, 5 * 16, 21 * 16);
 	
 	initGoomba(&goombas[0], 14 * 16, 21 * 16, 0);
@@ -77,18 +83,32 @@ void initLevel11(Player* player) {
 	initKoopa(&koopas[2], 84 * 16 + 8, 15 * 16, 1);
 	initKoopa(&koopas[3], 91 * 16 + 8, 21 * 16, 0);
 	initKoopa(&koopas[4], 131 * 16 + 8, 19 * 16, 0);
+
+	initPipeEntrance(&pipeEntrances[0], 23, 18, 1, LEVEL_11_PIPE_0, 0, 1);
+	initPipeEntrance(&pipeEntrances[1], 146, 19, 1, 0, 0, 0);
+
+	return &world11Level;
 }
-void initLevel11Pipe(Player* player) {
+Level* initWorld11Pipe0(Player* player) {
 	for(int i = 0; i < 18 * 11; i++) {map11Pipe[i] = baseMap11Pipe[i];}
 
-	level11PipeTilemap.tileSprites = tileSprites;
-	level11PipeTilemap.tilew = 16;
-	level11PipeTilemap.tileh = 16;
-	level11PipeTilemap.map = &map11Pipe[0];
-	level11PipeTilemap.mapw = 18;
-	level11PipeTilemap.maph = 11;
-	
+	openSoundFile(&world11Music, "romfs:/music11.raw", 0, 0);
+
+	world11Pipe0Level.levelID = LEVEL_11_PIPE_0;
+	world11Pipe0Level.tileSprites = tileSprites;
+	world11Pipe0Level.background = &world11BGSprite;
+	world11Pipe0Level.music = &world11Music;
+	world11Pipe0Level.map = &map11Pipe[0];
+	world11Pipe0Level.mapw = 18;
+	world11Pipe0Level.maph = 11;
+
+	initObjects();
 	initPlayer(player, 4 * 16, 4 * 16);
+
+	initPipeEntrance(&pipeEntrances[0], 2, 2, 1, 0, 0, 0);
+	initPipeEntrance(&pipeEntrances[1], 16, 2, -1, LEVEL_11, 1, 1);
+
+	return &world11Pipe0Level;
 }
 
 #endif

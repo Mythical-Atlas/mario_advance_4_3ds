@@ -15,6 +15,7 @@ Piranha piranhas[MAX_OBJECTS];
 Particle particles[MAX_OBJECTS];
 Feather feathers[MAX_OBJECTS];
 BrickBlock brickBlocks[MAX_OBJECTS];
+PipeEntrance pipeEntrances[MAX_OBJECTS];
 
 int findFreeQuestionBlock() {
 	for(int i = 0; i < MAX_OBJECTS; i++) {if(!questionBlocks[i].exists) {return i;}}
@@ -54,6 +55,10 @@ int findFreeFeather() {
 }
 int findFreeBrickBlock() {
 	for(int i = 0; i < MAX_OBJECTS; i++) {if(!brickBlocks[i].exists) {return i;}}
+	return -1;
+}
+int findFreePipeEntrance() {
+	for(int i = 0; i < MAX_OBJECTS; i++) {if(!pipeEntrances[i].exists) {return i;}}
 	return -1;
 }
 

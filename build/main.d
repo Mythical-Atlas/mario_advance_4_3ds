@@ -124,6 +124,7 @@ main.o: C:/Users/Ben/3DS_Projects/mario/source/main.c \
  C:/Users/Ben/3DS_Projects/mario/source/brickBlock.h \
  C:/Users/Ben/3DS_Projects/mario/source/piranha.h \
  C:/Users/Ben/3DS_Projects/mario/source/coin.h \
+ C:/Users/Ben/3DS_Projects/mario/source/pipeEntrance.h \
  C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h \
  C:/Users/Ben/3DS_Projects/mario/source/player.h \
  C:/Users/Ben/3DS_Projects/mario/source/playerBehavior.h \
@@ -253,6 +254,7 @@ C:/Users/Ben/3DS_Projects/mario/source/shell.h:
 C:/Users/Ben/3DS_Projects/mario/source/brickBlock.h:
 C:/Users/Ben/3DS_Projects/mario/source/piranha.h:
 C:/Users/Ben/3DS_Projects/mario/source/coin.h:
+C:/Users/Ben/3DS_Projects/mario/source/pipeEntrance.h:
 C:/Users/Ben/3DS_Projects/mario/source/hudHandler.h:
 C:/Users/Ben/3DS_Projects/mario/source/player.h:
 C:/Users/Ben/3DS_Projects/mario/source/playerBehavior.h:

@@ -4,44 +4,44 @@
 #include "global.h"
 #include "csimple.h"
 
-int getMapValue(Tilemap tilemap, int x, int y) {return tilemap.map[x + y * tilemap.mapw];}
-void setMapValue(Tilemap* tilemap, int x, int y, int value) {tilemap->map[x + y * tilemap->mapw] = value;}
+int getMapValue(Level* level, int x, int y) {return level->map[x + y * level->mapw];}
+void setMapValue(Level* level, int x, int y, int value) {level->map[x + y * level->mapw] = value;}
 
-void drawTilemap(Tilemap tilemap, Vec2 camPos, int tileAnimTimer) {
-	for(int x = 0; x < tilemap.mapw; x++) {
-		for(int y = 0; y < tilemap.maph; y++) {
-			if(getMapValue(tilemap, x, y) != -1) {
-				if(getMapValue(tilemap, x, y) == 108) {/*drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);*/}
-				else if(getMapValue(tilemap, x, y) == 129) {drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);}
-				else if(getMapValue(tilemap, x, y) == 171) {/*drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);*/}
-				else {drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y)], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);}
+void drawTilemap(Level* level, Vec2 camPos) {
+	for(int x = 0; x < level->mapw; x++) {
+		for(int y = 0; y < level->maph; y++) {
+			if(getMapValue(level, x, y) != -1) {
+				if(getMapValue(level, x, y) == 108) {}
+				else if(getMapValue(level, x, y) == 129) {}
+				else if(getMapValue(level, x, y) == 171) {}
+				else {drawSprite(&level->tileSprites[getMapValue(level, x, y)], x * 16 - (int)camPos.x, y * 16 - (int)camPos.y);}
 			}
 		}
 	}
 }
-void drawTilemapWithoutPipes(Tilemap tilemap, Vec2 camPos, int tileAnimTimer) {
-	for(int x = 0; x < tilemap.mapw; x++) {
-		for(int y = 0; y < tilemap.maph; y++) {
+void drawTilemapWithoutPipes(Level* level, Vec2 camPos) {
+	for(int x = 0; x < level->mapw; x++) {
+		for(int y = 0; y < level->maph; y++) {
 			if(
-				getMapValue(tilemap, x, y) != -1 &&
-				!(getMapValue(tilemap, x, y) >= 59 && getMapValue(tilemap, x, y) <= 62) &&
-				!(getMapValue(tilemap, x, y) >= 80 && getMapValue(tilemap, x, y) <= 83)
+				getMapValue(level, x, y) != -1 &&
+				!(getMapValue(level, x, y) >= 59 && getMapValue(level, x, y) <= 62) &&
+				!(getMapValue(level, x, y) >= 80 && getMapValue(level, x, y) <= 83)
 			) {
-				if(getMapValue(tilemap, x, y) == 108) {/*drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);*/}
-				else if(getMapValue(tilemap, x, y) == 129) {drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);}
-				else if(getMapValue(tilemap, x, y) == 171) {/*drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y) + tileAnimTimer], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);*/}
-				else {drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y)], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);}
+				if(getMapValue(level, x, y) == 108) {}
+				else if(getMapValue(level, x, y) == 129) {}
+				else if(getMapValue(level, x, y) == 171) {}
+				else {drawSprite(&level->tileSprites[getMapValue(level, x, y)], x * 16 - (int)camPos.x, y * 16 - (int)camPos.y);}
 			}
 		}
 	}
 }
-void drawTilemapOnlyPipes(Tilemap tilemap, Vec2 camPos) {
-	for(int x = 0; x < tilemap.mapw; x++) {
-		for(int y = 0; y < tilemap.maph; y++) {
+void drawTilemapOnlyPipes(Level* level, Vec2 camPos) {
+	for(int x = 0; x < level->mapw; x++) {
+		for(int y = 0; y < level->maph; y++) {
 			if(
-				(getMapValue(tilemap, x, y) >= 59 && getMapValue(tilemap, x, y) <= 62) ||
-				(getMapValue(tilemap, x, y) >= 80 && getMapValue(tilemap, x, y) <= 83)
-			) {drawSprite(&tilemap.tileSprites[getMapValue(tilemap, x, y)], x * tilemap.tilew - (int)camPos.x, y * tilemap.tileh - (int)camPos.y);}
+				(getMapValue(level, x, y) >= 59 && getMapValue(level, x, y) <= 62) ||
+				(getMapValue(level, x, y) >= 80 && getMapValue(level, x, y) <= 83)
+			) {drawSprite(&level->tileSprites[getMapValue(level, x, y)], x * 16 - (int)camPos.x, y * 16- (int)camPos.y);}
 		}
 	}
 }

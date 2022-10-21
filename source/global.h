@@ -11,6 +11,9 @@
 #define BYTESPERSAMPLE 4
 #define BUFFER_SIZE SAMPLESPERBUF * BYTESPERSAMPLE
 
+#define LEVEL_11        0
+#define LEVEL_11_PIPE_0 1
+
 typedef struct {
 	float x;
 	float y;
@@ -42,7 +45,7 @@ typedef struct {
 	float w;
 	float h;
 } BoundBox;
-
+/*
 typedef struct {
 	C2D_Sprite* tileSprites;
 	int tilew;
@@ -51,24 +54,16 @@ typedef struct {
 	int mapw;
 	int maph;
 } Tilemap; // replace with level
+*/
 
 typedef struct {
-	int tileX;
-	int tileY;
-	int direction;
-	int destLevel;
-	int destPipe;
-} PipeData;
-
-typedef struct {
+	int levelID;
 	C2D_Sprite* tileSprites;
 	C2D_Sprite* background;
-	Audiofile* music;
-	int* templateMap;
+	AudioFile* music;
 	int* map;
 	int mapw;
 	int maph;
-	PipeData* pipeData
 } Level;
 
 typedef struct {
@@ -82,7 +77,8 @@ typedef struct {
 	bool canUpdraft;
 	int carrying;
 	int pipeDirection;
-	bool pipeTravel;
+	bool shouldPipeTravel;
+	int pipeIndex;
 
 	int deathTimer;
 	float pTimer;
@@ -213,6 +209,17 @@ typedef struct {
 
 	Animation anim;
 } BrickBlock;
+
+typedef struct {
+	int xTile;
+	int yTile;
+	bool exists;
+	
+	int direction;
+	int destLevel;
+	int destPipe;
+	bool enterable;
+} PipeEntrance;
 
 void setVec2(Vec2* target, float x, float y) {
 	target->x = x;

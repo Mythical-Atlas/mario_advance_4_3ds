@@ -25,14 +25,14 @@ void initLifeShroom(Mushroom* mushroom, int x, int y) {
 	mushroom->life = 1;
 }
 
-void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
+void updateMushroom(Mushroom* mushroom, Level* level, int timeDelta) {
 	if(mushroom->appearing > 0) {
 		mushroom->pos.y--;
 		mushroom->appearing--;
 	}
 	else {
-		int surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
-		int surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
+		int surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), level);
+		int surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), level);
 		if(mushroom->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 		
 		mushroom->ground = false;
@@ -46,8 +46,8 @@ void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
 		mushroom->pos.x += mushroom->vel.x * timeDelta;
 		mushroom->pos.y += mushroom->vel.y * timeDelta;
 		
-		surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
-		surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), tilemap);
+		surroundingSolids = checkSurroundingSolids((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), level);
+		surroundingPlatforms = checkSurroundingPlatforms((int)(mushroom->pos.x / 16), (int)((mushroom->pos.y - 8) / 16), level);
 		int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 		int xTests[numTestSolids];
 		int yTests[numTestSolids];
@@ -55,7 +55,7 @@ void updateMushroom(Mushroom* mushroom, Tilemap tilemap, int timeDelta) {
 		
 		for(int i = 0; i < numTestSolids; i++) {
 			if(checkBBOverlap(getBB(mushroom->pos.x - 8, mushroom->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]))) {
-				Vec2 overlap = findSmallestOverlap(getBB(mushroom->pos.x - 8, mushroom->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]), surroundingSolids, mushroom->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+				Vec2 overlap = findSmallestOverlap(getBB(mushroom->pos.x - 8, mushroom->pos.y - 16, 16, 16), getTileBB(xTests[i], yTests[i]), surroundingSolids, mushroom->vel, checkPlatform(getMapValue(level, xTests[i], yTests[i])));
 				
 				mushroom->pos.x -= overlap.x;
 				mushroom->pos.y -= overlap.y;

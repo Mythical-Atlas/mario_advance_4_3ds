@@ -50,9 +50,9 @@ void playShellCoinSound(Shell* shell) {
 	playSound(&shell->coinSound);
 }
 
-void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, int timeDelta) {
-	int surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
-	int surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
+void updateShell(Shell* shell, Level* level, QuestionBlock* questionBlocks, int timeDelta) {
+	int surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), level);
+	int surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), level);
 	if(shell->vel.y >= 0) {surroundingSolids += surroundingPlatforms;}
 	
 	//bool leftLedge = 1;
@@ -79,8 +79,8 @@ void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, i
 	shell->pos.x += shell->vel.x * timeDelta;
 	shell->pos.y += shell->vel.y * timeDelta;
 	
-	surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
-	surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), tilemap);
+	surroundingSolids = checkSurroundingSolids((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), level);
+	surroundingPlatforms = checkSurroundingPlatforms((int)(shell->pos.x / 16), (int)((shell->pos.y - 7) / 16), level);
 	int numTestSolids = getNumTests(surroundingSolids + surroundingPlatforms);
 	int xTests[numTestSolids];
 	int yTests[numTestSolids];
@@ -88,7 +88,7 @@ void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, i
 	
 	for(int i = 0; i < numTestSolids; i++) {
 		if(checkBBOverlap(getBB(shell->pos.x - 6, shell->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]))) {
-			Vec2 overlap = findSmallestOverlap(getBB(shell->pos.x - 6, shell->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, shell->vel, checkPlatform(getMapValue(tilemap, xTests[i], yTests[i])));
+			Vec2 overlap = findSmallestOverlap(getBB(shell->pos.x - 6, shell->pos.y - 14, 12, 14), getTileBB(xTests[i], yTests[i]), surroundingSolids, shell->vel, checkPlatform(getMapValue(level, xTests[i], yTests[i])));
 			
 			shell->pos.x -= overlap.x;
 			shell->pos.y -= overlap.y;
@@ -108,7 +108,7 @@ void updateShell(Shell* shell, Tilemap tilemap, QuestionBlock* questionBlocks, i
 					}
 					if(brickBlocks[q].exists && brickBlocks[q].xTile == xTests[i] && brickBlocks[q].yTile == yTests[i]) {
 						destroyBrickBlock(&brickBlocks[q]);
-						setMapValue(&tilemap, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
+						setMapValue(level, brickBlocks[q].xTile, brickBlocks[q].yTile, -1);
 						playShellBumpSound(shell);
 					}
 				}
