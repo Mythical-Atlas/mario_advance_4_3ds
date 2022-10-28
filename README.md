@@ -2,7 +2,7 @@
 
 This is a port of the GBA game by the same name.
 
-![running on 3DS](/photo.png)
+![running on 3DS](/photo.jpg)
 
 Uses CTR User Library: https://github.com/devkitPro/libctru
 
