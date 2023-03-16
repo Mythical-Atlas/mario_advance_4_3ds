@@ -13,6 +13,8 @@
 
 using namespace std;
 
+// use CLASSES
+
 struct TimeObj { // all times measured in ms
 	uint64_t programStartTime;
 	uint64_t frameStartTime;
@@ -32,6 +34,8 @@ struct MenuObj {
 	void update(struct GameObj* game);
 
 	void render(struct GameObj* game) {}
+
+	void unload() {}
 };
 
 struct LevelObj {
@@ -52,11 +56,23 @@ struct LevelObj {
 	void update(struct GameObj* game);
 
 	void render(struct GameObj* game) {}
+
+	void unload() {}
 };
 
 struct StateObj {
 	void* objPtr;
 	uint8_t type;
+
+	void (*load)();
+
+	void (*init)();
+
+	void (*update)(struct GameObj*);
+
+	void (*render)(struct GameObj*);
+
+	void (*unload)();
 
 	void create(int8_t type = -1) {
 		if(type != -1) {this->type = type;}
@@ -67,13 +83,10 @@ struct StateObj {
 				break;
 			case STATE_TYPE_MENU:
 				objPtr = new MenuObj;
-				((MenuObj*)objPtr)->load();
-				((MenuObj*)objPtr)->init();
+				load = ((MenuObj*)objPtr)->load;
 				break;
 			case STATE_TYPE_LEVEL:
 				objPtr = new LevelObj;
-				((LevelObj*)objPtr)->load();
-				((LevelObj*)objPtr)->init();
 				break;
 		}
 	}
@@ -91,7 +104,14 @@ struct GameObj {
 	CamObj cams[CAM_COUNT];
 	CamObj* cam;
 
-	void changeState(int state) {this->state = &states[state];} // should init or load be here?
+	void changeState(int state) {
+		if(this->state != nullptr) {this->state->unload();}
+
+		this->state = &states[state];
+
+		this->state->load();
+		this->state->init();
+	}
 };
 
 #endif
