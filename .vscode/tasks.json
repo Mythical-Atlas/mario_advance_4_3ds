@@ -10,9 +10,10 @@
 			"args": [
 			  "-fdiagnostics-color=always",
 			  "-g",
-			  "${workspaceFolder}\\source\\main.c",
+			  "${workspaceFolder}\\source\\main.cpp",
 			  "-o",
-			  "${workspaceFolder}\\main.exe"
+			  "${workspaceFolder}\\mario.exe",
+			  "-std=c++17"
 			],
 			"problemMatcher": ["$gcc"],
 			"group": {
