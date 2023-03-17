@@ -13,35 +13,35 @@
 
 using namespace std;
 
-// use CLASSES
-
-struct TimeObj { // all times measured in ms
+class TimeObj { // all times measured in ms
+public:
 	uint64_t programStartTime;
 	uint64_t frameStartTime;
 	uint16_t lastFrameDuration;
 };
 
-struct MenuObj {
-	string items[4] = {"start", "options", "help", "exit"};
-	string* selection;
-	
+class StateObj {
+public:
+	virtual void load() {}
+	virtual void init() {}
+	virtual void update(struct GameObj* game) {}
+	virtual void render(struct GameObj* game) {}
+	virtual void unload() {}
+};
+
+class MenuObj: public StateObj {
+public:
 	int x;
 
 	void load() {}
-
 	void init() {x = 1;}
-
 	void update(struct GameObj* game);
-
 	void render(struct GameObj* game) {}
-
 	void unload() {}
 };
 
-struct LevelObj {
-	int tiles[5] = {122, 12, 54, 92, 213};
-	int entities[2] = {4, 9};
-
+class LevelObj: public StateObj {
+public:
 	int y;
 
 	// music
@@ -50,64 +50,40 @@ struct LevelObj {
 	// tilemap
 
 	void load() {}
-
 	void init() {y = 3;}
-
 	void update(struct GameObj* game);
-
 	void render(struct GameObj* game) {}
-
 	void unload() {}
 };
 
-struct StateObj {
-	void* objPtr;
-	uint8_t type;
-
-	void (*load)();
-
-	void (*init)();
-
-	void (*update)(struct GameObj*);
-
-	void (*render)(struct GameObj*);
-
-	void (*unload)();
-
-	void create(int8_t type = -1) {
-		if(type != -1) {this->type = type;}
-
-		switch(this->type) {
-			case STATE_TYPE_EMPTY:
-				objPtr = 0;
-				break;
-			case STATE_TYPE_MENU:
-				objPtr = new MenuObj;
-				load = ((MenuObj*)objPtr)->load;
-				break;
-			case STATE_TYPE_LEVEL:
-				objPtr = new LevelObj;
-				break;
-		}
-	}
-};
-
-struct CamObj {
+class CamObj {
 	// position
 };
 
-struct GameObj {
+class GameObj {
+public:
 	bool running;
 	TimeObj time;
-	StateObj states[STATE_COUNT];
+	StateObj* states[STATE_COUNT];
 	StateObj* state;
 	CamObj cams[CAM_COUNT];
 	CamObj* cam;
 
+	void init() {
+		states[0] = new MenuObj;
+		states[1] = new LevelObj;
+
+		state = 0;
+		cam = 0;
+
+		changeState(0);
+		running = true;
+	}
+
 	void changeState(int state) {
 		if(this->state != nullptr) {this->state->unload();}
 
-		this->state = &states[state];
+		this->state = states[state];
 
 		this->state->load();
 		this->state->init();
