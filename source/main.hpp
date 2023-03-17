@@ -11,36 +11,39 @@
 #include <iostream>
 #include <string>
 
+#include "graphics.hpp"
+#include "collision.hpp"
+
 using namespace std;
 
-class TimeObj { // all times measured in ms
+class TimeObject { // all times measured in ms
 public:
 	uint64_t programStartTime;
 	uint64_t frameStartTime;
 	uint16_t lastFrameDuration;
 };
 
-class StateObj {
+class State {
 public:
 	virtual void load() {}
 	virtual void init() {}
-	virtual void update(struct GameObj* game) {}
-	virtual void render(struct GameObj* game) {}
+	virtual void update(struct GameObject* game) {}
+	virtual void render(struct GameObject* game) {}
 	virtual void unload() {}
 };
 
-class MenuObj: public StateObj {
+class MenuState: public State {
 public:
 	int x;
 
 	void load() {}
 	void init() {x = 1;}
-	void update(struct GameObj* game);
-	void render(struct GameObj* game) {}
+	void update(struct GameObject* game);
+	void render(struct GameObject* game) {}
 	void unload() {}
 };
 
-class LevelObj: public StateObj {
+class LevelState: public State {
 public:
 	int y;
 
@@ -51,30 +54,22 @@ public:
 
 	void load() {}
 	void init() {y = 3;}
-	void update(struct GameObj* game);
-	void render(struct GameObj* game) {}
+	void update(struct GameObject* game);
+	void render(struct GameObject* game) {}
 	void unload() {}
 };
 
-class CamObj {
-	// position
-};
-
-class GameObj {
+class GameObject {
 public:
 	bool running;
-	TimeObj time;
-	StateObj* states[STATE_COUNT];
-	StateObj* state;
-	CamObj cams[CAM_COUNT];
-	CamObj* cam;
+	State* states[STATE_COUNT];
+	State* state;
 
 	void init() {
-		states[0] = new MenuObj;
-		states[1] = new LevelObj;
+		states[0] = new MenuState;
+		states[1] = new LevelState;
 
 		state = 0;
-		cam = 0;
 
 		changeState(0);
 		running = true;
@@ -89,5 +84,30 @@ public:
 		this->state->init();
 	}
 };
+
+class Tileset {
+	Bitmap tilesheet;
+	int tileSize[2];
+	CollisionShape* collisions;
+};
+
+class Tile {
+	//Tileset* tileset;
+	int index[2];
+};
+
+class Tilemap {
+	Tile* tiles;
+};
+
+class Object {
+	// vector position
+
+	virtual void init() {}
+	virtual void update() {}
+	virtual void render() {}
+};
+
+class Controller {};
 
 #endif

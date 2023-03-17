@@ -1,9 +1,9 @@
-#include "main.h"
+#include "main.hpp"
 
 // 3ds: osGetTime();
 // pc: ???
 
-void MenuObj::update(GameObj* game)  {
+void MenuState::update(GameObject* game)  {
 	cout << "> ";
 	string command;
 	getline(cin, command);
@@ -14,7 +14,7 @@ void MenuObj::update(GameObj* game)  {
 	if(command == "x2") {x = 2;}
 }
 
-void LevelObj::update(GameObj* game)  {
+void LevelState::update(GameObject* game)  {
 	cout << ") ";
 	string command;
 	getline(cin, command);
@@ -26,7 +26,7 @@ void LevelObj::update(GameObj* game)  {
 }
 
 int main() {
-	GameObj game;
+	GameObject game;
 
 	game.init();
 
