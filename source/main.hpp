@@ -1,20 +1,17 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdint.h>
+
+#include "graphics.hpp"
+#include "collision.hpp"
+
 #define STATE_COUNT 2
 #define CAM_COUNT 1
 
 #define STATE_TYPE_EMPTY 0
 #define STATE_TYPE_MENU 1
 #define STATE_TYPE_LEVEL 2
-
-#include <iostream>
-#include <string>
-
-#include "graphics.hpp"
-#include "collision.hpp"
-
-using namespace std;
 
 class TimeObject { // all times measured in ms
 public:

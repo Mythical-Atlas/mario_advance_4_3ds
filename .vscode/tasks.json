@@ -8,12 +8,18 @@
 			"label": "C/C++: g++.exe build active file",
 			"command": "g++",
 			"args": [
-			  "-fdiagnostics-color=always",
-			  "-g",
-			  "${workspaceFolder}\\source\\main.cpp",
-			  "-o",
-			  "${workspaceFolder}\\mario.exe",
-			  "-std=c++17"
+				"-fdiagnostics-color=always",
+				"-g",
+				"${workspaceFolder}/source/main.cpp",
+				"-o",
+				"${workspaceFolder}/mario.exe",
+				"-std=c++17",
+				"-I",
+				"${workspaceFolder}/dependencies/glm-0.9.9.8/glm",
+				"-I",
+				"${workspaceFolder}/dependencies/glad/include",
+				"-I",
+				"${workspaceFolder}/dependencies/SDL2-2.26.2/include"
 			],
 			"problemMatcher": ["$gcc"],
 			"group": {

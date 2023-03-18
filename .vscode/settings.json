@@ -1,11 +1,5 @@
 {
-	"files.associations": {
-		"cwchar": "cpp",
-		"iostream": "cpp",
-		"vector": "cpp",
-		"ostream": "cpp",
-		"ios": "cpp",
-		"string": "cpp",
-		"xstring": "cpp"
-	}
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }

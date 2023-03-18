@@ -1,7 +1,10 @@
 #include "main.hpp"
+#include "window.hpp"
 
 // 3ds: osGetTime();
 // pc: ???
+
+using namespace std;
 
 void MenuState::update(GameObject* game)  {
 	cout << "> ";
@@ -25,7 +28,7 @@ void LevelState::update(GameObject* game)  {
 	if(command == "y4") {y = 4;}
 }
 
-int main() {
+int main(int argc, char* args[]) {
 	GameObject game;
 
 	game.init();
@@ -36,4 +39,6 @@ int main() {
 	}
 
 	system("pause");
+
+	return 0;
 }
