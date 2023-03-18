@@ -4,9 +4,10 @@
             "name": "Win64",
             "includePath": [
                 "C:/MinGW/include/**",
+                "${workspaceFolder}/include",
                 "${workspaceFolder}/dependencies/glm-0.9.9.8/glm",
                 "${workspaceFolder}/dependencies/glad/include",
-                "${workspaceFolder}/dependencies/SDL2-2.26.2/include"
+                "${workspaceFolder}/dependencies/SDL2-2.26.4/include"
             ],
             "defines": [],
             "cStandard": "c17",

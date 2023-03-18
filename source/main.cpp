@@ -1,3 +1,6 @@
+#include <string>
+#include <iostream>
+
 #include "main.hpp"
 #include "window.hpp"
 
@@ -29,16 +32,34 @@ void LevelState::update(GameObject* game)  {
 }
 
 int main(int argc, char* args[]) {
+	Window window;
+
+	window.init(false, 1280, 720, "TEST WINDOW");
+
+	bool running = true;
+	while(running) {
+		window.swap();
+		SDL_Event event;
+		while(window.pollEvent(&event)) {
+			switch(event.type) {
+				case SDL_QUIT:
+					running = false;
+					break;
+			}
+		}
+		
+	}
+
 	GameObject game;
 
-	game.init();
+	/*game.init();
 
 	while(game.running) {
 		game.state->update(&game);
 		game.state->render(&game);
 	}
 
-	system("pause");
+	system("pause");*/
 
 	return 0;
 }
