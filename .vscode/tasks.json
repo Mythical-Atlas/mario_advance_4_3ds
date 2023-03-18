@@ -13,6 +13,7 @@
 				"${workspaceFolder}/source/*.cpp",
 				"-g", "${workspaceFolder}/dependencies/glad/src/glad.c",
 				"-I", "${workspaceFolder}/include",
+				"-I", "${workspaceFolder}/dependencies",
 				"-I", "${workspaceFolder}/dependencies/glm-0.9.9.8/glm",
 				"-I", "${workspaceFolder}/dependencies/glad/include",
 				"-I", "${workspaceFolder}/dependencies/SDL2-2.26.4/include",

@@ -48,7 +48,7 @@ private:
 public:
     void create(bool fullscreen, int screenWidth, int screenHeight, string windowTitle);
     void init(bool fullscreen, int screenWidth, int screenHeight, string windowTitle);
-    vec2 getScreenSize();
+    vec2 getScreenSize(); // could be better
     bool checkFullscreen();
     void swap();
     int pollEvent(SDL_Event* event);
