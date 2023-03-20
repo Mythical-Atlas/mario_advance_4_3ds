@@ -1,18 +1,22 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <glm/glm.hpp>
+
 #include "renderProgram.hpp"
 
 using namespace std;
+using namespace glm;
 
 class Camera {
-    int viewWidth;
-    int viewHeight;
 public:
-    Camera() {}
-    Camera(int viewWidth, int viewHeight);
+    int viewSize[2];
+    vec2 pos;
+	vec2 scale;
+	float rotation;
 
-    void useViewMatrix(RenderProgram program);
+    void init(int viewSize[2]);
+    mat4 getViewMatrix();
 };
 
 #endif

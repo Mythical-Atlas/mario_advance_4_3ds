@@ -6,7 +6,7 @@
 class State {
 public:
 	virtual void load() {}
-	virtual void init() {}
+	virtual void init(class Window* window, class Game* game) {}
 	virtual void update(class Window* window, class Game* game) {}
 	virtual void render(class Window* window, class Game* game) {}
 	virtual void unload() {}
@@ -17,9 +17,13 @@ public:
 	bool running;
 	State* states[STATE_COUNT];
 	State* state;
-
-	void init();
+	Window* window;
+	
 	void changeState(int state);
+
+	void init(Window* window);
+	void update();
+	void render();
 };
 
 #endif

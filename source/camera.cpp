@@ -1,19 +1,22 @@
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "renderProgram.hpp"
 #include "camera.hpp"
 
-using namespace glm;
+//using namespace glm;
 
-Camera::Camera(int viewWidth, int viewHeight) {
-    this->viewWidth = viewWidth;
-    this->viewHeight = viewHeight;
+void Camera::init(int viewSize[2]) {
+    this->viewSize[0] = viewSize[0];
+    this->viewSize[1] = viewSize[1];
+
+    pos = vec2(0, 0);
+    scale = vec2(1, 1);
+    rotation = 0;
 }
 
-void Camera::useViewMatrix(RenderProgram program) {
+mat4 Camera::getViewMatrix() {
     mat4 viewMat(1);
-    viewMat = scale(viewMat, vec3(2.0f / viewWidth, -2.0f / viewHeight, 1));
-    viewMat = translate(viewMat, vec3(-viewWidth / 2.0f, -viewHeight / 2.0f, 0));
+    viewMat = glm::scale(viewMat, vec3(2.0f / viewSize[0] * scale.x, -2.0f / viewSize[1] * scale.y, 1));
+    viewMat = glm::translate(viewMat, vec3(-viewSize[0] / 2.0f - pos.x, -viewSize[1] / 2.0f - pos.y, 0));
+    viewMat = glm::rotate(viewMat, rotation, vec3(0, 0, 1)); // currently rotates around top left corner
 
-    program.uniformMatrix4fv("viewMat", viewMat);
+    return viewMat;
 }

@@ -14,7 +14,7 @@ public:
 	// tilemap
 
 	void load() {}
-	void init() {y = 3;}
+	void init(class Window* window, class Game* game) {y = 3;}
 	void update(Window* window, Game* game);
 	void render(Window* window, Game* game) {}
 	void unload() {}

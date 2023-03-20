@@ -20,7 +20,7 @@ public:
 
     void bind();
 
-    void draw(int offset, int size);
+    void render(int offset, int size);
 };
 
 #endif

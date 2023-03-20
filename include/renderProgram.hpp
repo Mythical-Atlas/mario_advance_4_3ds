@@ -5,8 +5,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "graphics.hpp"
-
 using namespace glm;
 
 class RenderProgram {
@@ -21,10 +19,12 @@ public:
 
     void use();
 
-    void bindTexture(Texture texture);
+    void bindTexture(class Texture* texture);
     void bindTexture(unsigned int texture);
 
     void uniformMatrix4fv(const char* name, mat4 matrix);
+
+    void useViewMatrix(class Camera* camera);
 };
 
 #endif

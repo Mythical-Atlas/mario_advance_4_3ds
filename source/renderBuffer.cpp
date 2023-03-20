@@ -38,4 +38,4 @@ void RenderBuffer::bind() {
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-void RenderBuffer::draw(int offset, int size) {glDrawArrays(GL_TRIANGLE_STRIP, offset, size);}
+void RenderBuffer::render(int offset, int size) {glDrawArrays(GL_TRIANGLE_STRIP, offset, size);}

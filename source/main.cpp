@@ -14,11 +14,11 @@ int main(int argc, char* args[]) {
 	window.init(false, 1280, 720, "TEST WINDOW");
 
 	Game game;
-	game.init();
+	game.init(&window);
 
 	while(game.running) {
-		game.state->update(&window, &game);
-		game.state->render(&window, &game);
+		game.update();
+		game.render();
 
 		window.swap();
 		SDL_Event event;
@@ -29,7 +29,6 @@ int main(int argc, char* args[]) {
 					break;
 			}
 		}
-		
 	}
 
 	return 0;

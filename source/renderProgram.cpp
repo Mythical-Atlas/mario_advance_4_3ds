@@ -2,6 +2,8 @@
 #include <fstream>
 
 #include "renderProgram.hpp"
+#include "graphics.hpp"
+#include "camera.hpp"
 
 using namespace std;
 
@@ -57,15 +59,17 @@ void RenderProgram::link() {
 
 void RenderProgram::use() {glUseProgram(pointer);}
 
-void RenderProgram::bindTexture(Texture texture) {
-    glBindTexture(GL_TEXTURE_2D, texture.pointer);
-    glProgramUniform1i(pointer, 0, 0);
-}
 void RenderProgram::bindTexture(unsigned int texture) {
     glBindTexture(GL_TEXTURE_2D, texture);
     glProgramUniform1i(pointer, 0, 0);
 }
+void RenderProgram::bindTexture(Texture* texture) {bindTexture(texture->pointer);}
 
 void RenderProgram::uniformMatrix4fv(const char* name, glm::mat4 matrix) {
-    glUniformMatrix4fv(glGetUniformLocation(pointer, "viewMat"), 1, GL_FALSE, glm::value_ptr(matrix));
+    glUniformMatrix4fv(glGetUniformLocation(pointer, name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void RenderProgram::useViewMatrix(Camera* camera) {
+    use();
+    uniformMatrix4fv("viewMat", camera->getViewMatrix());
 }

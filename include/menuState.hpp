@@ -11,12 +11,13 @@
 class MenuState: public State {
 public:
 	Texture tex;
+	Sprite sprite;
 	RenderProgram rp;
 	RenderBuffer rb;
 	Camera cam;
 
 	void load();
-	void init();
+	void init(class Window* window, class Game* game);
 	void update(Window* window, Game* game);
 	void render(Window* window, Game* game);
 	void unload();

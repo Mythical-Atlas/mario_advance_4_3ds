@@ -37,6 +37,6 @@ class Object {
 	virtual void render() {}
 };
 
-class Controller {};
+class Controller {}; // input buffering
 
 #endif
