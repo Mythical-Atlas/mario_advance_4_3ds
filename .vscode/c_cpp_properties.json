@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Win64",
+            "name": "Win32",
             "includePath": [
                 "C:/MinGW/include/**",
                 "${workspaceFolder}/include",
