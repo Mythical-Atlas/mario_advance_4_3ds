@@ -16,14 +16,15 @@ int main(int argc, char* args[]) {
 	window.init(false, 1280, 720, "TEST WINDOW");
 
 	Game game;
-	game.init(&window);
+	game.running = true;
+	//game.init(&window);
 
-	AudioPlayer audio;
+	AudioMixer audio;
 	audio.init();
 
 	while(game.running) {
-		game.update();
-		game.render();
+		/*game.update();
+		game.render();*/
 
 		window.swap();
 		SDL_Event event;

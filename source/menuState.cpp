@@ -6,7 +6,8 @@
 using namespace std;
 
 void MenuState::load()  {
-	tex.load("C:/Users/Ben/Desktop/Storage/2-18-2023 Desktop Clean/Laptop 3-2-2021/Ben Correll/Desktop/Storage/SPRING.png");
+	//tex.load("C:/Users/Ben/Desktop/Storage/2-18-2023 Desktop Clean/Laptop 3-2-2021/Ben Correll/Desktop/Storage/SPRING.png");
+    tex.load("resources/test.png");
     sprite.init(&tex, new vec2[2]{vec2(0, 0), vec2(1, 1)});
 
 	rp = RenderProgram("Sprite Program");
