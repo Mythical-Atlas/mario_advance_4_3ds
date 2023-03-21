@@ -22,6 +22,7 @@
 				"-l", "SDL2main",
 				"-l", "SDL2",
 				"-o", "${workspaceFolder}\\mario.exe",
+				"-D", "USE_OPENGL_4_3",
 			],
 			"problemMatcher": ["$gcc"],
 			"group": {

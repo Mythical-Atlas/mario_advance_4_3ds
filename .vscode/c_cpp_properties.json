@@ -10,7 +10,7 @@
                 "${workspaceFolder}/dependencies/glad/include",
                 "${workspaceFolder}/dependencies/SDL2-2.26.4/include"
             ],
-            "defines": [],
+            "defines": ["USE_OPENGL_4_3"],
             "cStandard": "c17",
             "cppStandard": "c++17",
             "compilerArgs": []

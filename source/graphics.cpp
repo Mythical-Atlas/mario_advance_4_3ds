@@ -11,10 +11,18 @@ void Texture::load(string path) {
         cout << "Could not load image file" << endl;
         abort();
     }
-    
+
+#ifndef USE_OPENGL_4_3
     glCreateTextures(GL_TEXTURE_2D, 1, &pointer);
     glTextureStorage2D(pointer, 1, GL_RGBA8, size[0], size[1]);
     glTextureSubImage2D(pointer, 0, 0, 0, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, data);
+#else
+    glGenTextures(1, &pointer);
+    glBindTexture(GL_TEXTURE_2D, pointer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size[0], size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+#endif
+
+    stbi_image_free(data);
 }
 
 mat4 Sprite::getModelMatrix() {

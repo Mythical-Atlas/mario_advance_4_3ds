@@ -17,7 +17,7 @@ int main(int argc, char* args[]) {
 
 	Game game;
 	game.running = true;
-	//game.init(&window);
+	game.init(&window);
 
 	AudioMixer audio;
 	audio.init();

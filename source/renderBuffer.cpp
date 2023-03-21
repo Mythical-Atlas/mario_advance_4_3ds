@@ -4,6 +4,7 @@
 void RenderBuffer::allocate(int attribCount, int attribSizes[], int size, float data[]) {
     this->size = size;
 
+#ifndef USE_OPENGL_4_3
     glCreateBuffers(1, &glbuffer);
     glNamedBufferStorage(glbuffer, sizeof(GLfloat) * size, data, GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
 
@@ -21,6 +22,11 @@ void RenderBuffer::allocate(int attribCount, int attribSizes[], int size, float 
 
         offset += sizeof(GLfloat) * attribSizes[i];
     }
+#else
+    glGenBuffers(1, &glbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, glbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+#endif
 }
 
 RenderBuffer::RenderBuffer(int attribCount, int attribSizes[], int size) {allocate(attribCount, attribSizes, size, NULL);}
