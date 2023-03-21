@@ -32,24 +32,40 @@ int main(int argc, char* args[]) {
 
 	music.start();
 
-	uint16_t audioCount = 0;
+	Controller controller;
+
+	bool coinReady = false;
 
 	while(game.running) {
 		/*game.update();
 		game.render();*/
 
-		audioCount++;
-		if(audioCount == 60) {music.start();}
-		if(audioCount == 120) {music.pause();}
-		if(audioCount == 200) {grow.start();}
-		if(audioCount == 120) {music.resume();}
-
-		if(audioCount % 2 == 0) {coin.start();}
+		if(controller.up) {
+			if(coinReady) {coin.start();}
+			coinReady = false;
+		}
+		else {coinReady = true;}
 
 		window.swap();
 		SDL_Event event;
 		while(window.pollEvent(&event)) {
 			switch(event.type) {
+				case SDL_KEYDOWN:
+					switch(event.key.keysym.sym) {
+						case SDLK_LEFT: controller.left = true; break;
+						case SDLK_RIGHT: controller.right = true; break;
+						case SDLK_UP: controller.up = true; break;
+						case SDLK_DOWN: controller.down = true; break;
+					}
+					break;
+				case SDL_KEYUP:
+					switch(event.key.keysym.sym) {
+						case SDLK_LEFT: controller.left = false; break;
+						case SDLK_RIGHT: controller.right = false; break;
+						case SDLK_UP: controller.up = false; break;
+						case SDLK_DOWN: controller.down = false; break;
+					}
+					break;
 				case SDL_QUIT:
 					game.running = false;
 					break;
