@@ -14,48 +14,34 @@ using namespace std;
 
 class AudioStream {
 public:
-    bool exists;
     bool playing;
     ifstream fileStream;
     uint8_t volume;
     bool loop;
 
-    AudioStream() {exists = false;}
     AudioStream(string path, uint8_t volume, bool loop) {
-        exists = true;
         playing = false;
         fileStream = ifstream(path, ios::binary);
         this->volume = volume;
         this->loop = loop;
     }
 
-    void unload() {
-        exists = false;
-        fileStream.close();
-    }
+    void unload() {fileStream.close();}
 
     void start() {
-        if(exists) {
-            playing = true;
-            fileStream.clear();
-            fileStream.seekg(0, ios::beg);
-        }
+        playing = true;
+        fileStream.clear();
+        fileStream.seekg(0, ios::beg);
     }
-    void pause() {if(exists) {playing = false;}}
-    void resume() {if(exists) {playing = true;}}
+    void pause() {playing = false;}
+    void resume() {playing = true;}
     void stop() {
-        if(exists) {
-            playing = false;
-            fileStream.clear();
-            fileStream.seekg(0, ios::beg);
-        }
+        playing = false;
+        fileStream.clear();
+        fileStream.seekg(0, ios::beg);
     }
 };
 
-// modify to make into a mixer
-// list of filestreams (loaded at runtime?)
-// list of attributes
-// mix all active filestreams in callback
 class AudioMixer {
 public:
     AudioStream* streams[MAX_AUDIO_STREAMS];
@@ -70,7 +56,7 @@ public:
 
         for(uint8_t i = 0; i < MAX_AUDIO_STREAMS; i++) {
             AudioStream* stream = mixer->streams[i];
-            if(!stream->exists || !stream->playing) {continue;}
+            if(stream == nullptr || !stream->playing) {continue;}
 
             stream->fileStream.read((char*)mixer->buffer, length);
             SDL_MixAudioFormat(buffer, mixer->buffer, AUDIO_S16, stream->fileStream.gcount(), stream->volume/*SDL_MIX_MAXVOLUME*/);
@@ -97,26 +83,30 @@ public:
 
         device = SDL_OpenAudioDevice(NULL, 0, &spec, NULL, 0);
 
+        fill_n(streams, MAX_AUDIO_STREAMS, nullptr);
+
         //fileStream = ifstream("romfs/shortMusic.raw", ios::binary);
         //file2 = ifstream("romfs/shortMusic.raw", ios::binary);
-
-        //fill_n(audioStreams, MAX_AUDIO_STREAMS, new AudioStream);
 
         SDL_PauseAudioDevice(device, 0);
     }
 
-    void unload() {SDL_CloseAudioDevice(device);}
+    void unload() {
+        SDL_CloseAudioDevice(device);
+        //fill_n(streams, MAX_AUDIO_STREAMS, nullptr);
+    }
 
     bool addStream(AudioStream* stream) {
         for(uint8_t i = 0; i < MAX_AUDIO_STREAMS; i++) {
-            if(!streams[i]->exists) {
+            if(streams[i] == nullptr) {
                 streams[i] = stream;
                 return false;
             }
         }
-
         return true;
     }
+
+    void clearStreams() {fill_n(streams, MAX_AUDIO_STREAMS, nullptr);}
 };
 
 #endif
