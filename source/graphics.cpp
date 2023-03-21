@@ -8,7 +8,7 @@
 void Texture::load(string path) {
     data = stbi_load(path.c_str(), &size[0], &size[1], &channels, 0);
     if(data == NULL) {
-        cerr << "Could not load image file" << endl;
+        cout << "Could not load image file" << endl;
         abort();
     }
     

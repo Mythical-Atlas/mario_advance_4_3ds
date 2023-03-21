@@ -1,8 +1,10 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "main.hpp"
 #include "window.hpp"
+#include "audio.hpp"
 
 // 3ds: osGetTime();
 // pc: ???
@@ -15,6 +17,9 @@ int main(int argc, char* args[]) {
 
 	Game game;
 	game.init(&window);
+
+	AudioPlayer audio;
+	audio.init();
 
 	while(game.running) {
 		game.update();
@@ -30,6 +35,10 @@ int main(int argc, char* args[]) {
 			}
 		}
 	}
+
+	audio.unload();
+
+	SDL_Quit();
 
 	return 0;
 }
