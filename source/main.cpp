@@ -37,8 +37,8 @@ int main(int argc, char* args[]) {
 	bool coinReady = false;
 
 	while(game.running) {
-		/*game.update();
-		game.render();*/
+		game.update();
+		game.render();
 
 		if(controller.up) {
 			if(coinReady) {coin.start();}
