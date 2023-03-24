@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "C:/GitHub/mario_advance_4_3ds/mario.exe"
-  "C:/GitHub/mario_advance_4_3ds/mario.exe.manifest"
-  "C:/GitHub/mario_advance_4_3ds/mario.pdb"
+  "C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/mario.exe"
+  "C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/mario.exe.manifest"
+  "C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/mario.pdb"
   "CMakeFiles/mario.dir/dependencies/glad/src/glad.c.obj"
   "CMakeFiles/mario.dir/dependencies/glad/src/glad.c.obj.d"
   "CMakeFiles/mario.dir/source/camera.cpp.obj"

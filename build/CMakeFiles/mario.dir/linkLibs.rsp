@@ -1,1 +1,1 @@
-  -L"C:/GitHub/mario_advance_4_3ds/dependencies/SDL2-2.26.4/lib"  -lSDL2main -lSDL2 -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
+  -L"C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/dependencies/SDL2-2.26.4/lib"  -lSDL2main -lSDL2 -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
