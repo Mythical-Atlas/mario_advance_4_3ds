@@ -8,6 +8,7 @@
 #include "camera.hpp"
 #include "window.hpp"
 #include "audio.hpp"
+#include "controller.hpp"
 
 class MenuState: public State {
 public:

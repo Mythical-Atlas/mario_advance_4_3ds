@@ -7,7 +7,7 @@ add_executable(mario
 	include/audio.hpp
 	include/camera.hpp 			source/camera.cpp
 	include/collision.hpp
-	include/controller.hpp
+	include/controller.hpp		source/controller.cpp
 	include/game.hpp 			source/game.cpp
 	include/graphics.hpp 		source/graphics.cpp
 	include/levelState.hpp 		source/levelState.cpp
@@ -25,4 +25,4 @@ target_include_directories(mario PRIVATE include PUBLIC dependencies PUBLIC depe
 target_link_directories(mario PUBLIC dependencies/SDL2-2.26.4/lib)
 target_link_libraries(mario SDL2main SDL2)
 
-target_compile_definitions(mario PUBLIC USE_OPENGL_4_3)
+#target_compile_definitions(mario PUBLIC USE_OPENGL_4_3)

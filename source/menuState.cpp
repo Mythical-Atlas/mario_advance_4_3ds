@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "menuState.hpp"
+#include "audio.hpp"
 
 using namespace std;
 
@@ -27,9 +28,10 @@ void MenuState::load()  {
     };
 	int spriteAttribSizes[] = {4};
 
-    AudioStream music("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
-	AudioStream grow("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
-	AudioStream coin("romfs/coin.raw", SDL_MIX_MAXVOLUME, false);
+    music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
+	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
+	coin = AudioStream("romfs/coin.raw", SDL_MIX_MAXVOLUME, false);
+	death = AudioStream("romfs/death.raw", SDL_MIX_MAXVOLUME, false);
     
     rb = RenderBuffer(1, spriteAttribSizes, 16 * 3);
     rb.uploadData(0, 16, data);
@@ -52,19 +54,30 @@ void MenuState::init(Window* window, Game* game)  {
     mixer.init();
     memset(&controller, 0, sizeof(Controller)); // could be done with a union in Controller
 
-	audio.addStream(&music);
-	audio.addStream(&grow);
-	audio.addStream(&coin);
+	mixer.addStream(&music);
+	mixer.addStream(&jump);
+	mixer.addStream(&coin);
+	mixer.addStream(&death);
+
+    music.start();
     
     sprite1.pos = vec2(0, 0);
     sprite2.pos = vec2(200, 500);
     sprite3.pos = vec2(500, 200);
 }
 void MenuState::update(Window* window, Game* game)  {
-    //sprite.pos.x += 0.01f;
-    //sprite.pos.y += 0.01f;
+    if(controller.up) {sprite2.pos.y -= 0.1f;}
+    if(controller.down) {sprite2.pos.y += 0.1f;}
+    if(controller.left) {sprite2.pos.x -= 0.1f;}
+    if(controller.right) {sprite2.pos.x += 0.1f;}
+    
+    if(controller.l) {sprite2.rotation -= 0.01f;}
+    if(controller.r) {sprite2.rotation += 0.01f;}
+    
+    if(controller.b) {sprite2.scale.x += 0.01f;}
+    if(controller.a) {sprite2.scale.y += 0.01f;}
 }
-void MenuState::render(Window* window, Game* game)  {
+void MenuState::render(Window* window, Game* game)  { // TODO: layering using z position
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     rp.useViewMatrix(&cam);
@@ -77,23 +90,4 @@ void MenuState::unload() {
 	mixer.unload();
 }
 
-void MenuState::handleEvent(SDL_Event* event) {
-    switch(event->type) {
-        case SDL_KEYDOWN:
-            switch(event->key.keysym.sym) {
-                case SDLK_LEFT: controller.left = true; break;
-                case SDLK_RIGHT: controller.right = true; break;
-                case SDLK_UP: controller.up = true; break;
-                case SDLK_DOWN: controller.down = true; break;
-            }
-            break;
-        case SDL_KEYUP:
-            switch(event->key.keysym.sym) {
-                case SDLK_LEFT: controller.left = false; break;
-                case SDLK_RIGHT: controller.right = false; break;
-                case SDLK_UP: controller.up = false; break;
-                case SDLK_DOWN: controller.down = false; break;
-            }
-            break;
-    }
-}
+void MenuState::handleEvent(SDL_Event* event) {controller.handleEvent(event);}

@@ -5,8 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <SDL2/SDL.h>
-
 #define BUFFER_SIZE 1024 // in bytes
 #define MAX_AUDIO_STREAMS 5
 
@@ -19,6 +17,7 @@ public:
     uint8_t volume;
     bool loop;
 
+    AudioStream() {}
     AudioStream(string path, uint8_t volume, bool loop) {
         playing = false;
         fileStream = ifstream(path, ios::binary);

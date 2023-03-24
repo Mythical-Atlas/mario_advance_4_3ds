@@ -5,19 +5,6 @@
 
 #define STATE_COUNT 2
 
-struct Controller { // TODO: input buffering
-	bool left   : 1;
-	bool right  : 1;
-	bool up     : 1;
-	bool down   : 1;
-	bool a      : 1;
-	bool b      : 1;
-	bool l      : 1;
-	bool r      : 1;
-	bool start  : 1;
-	bool select : 1;
-};
-
 class State {
 public:
 	virtual void load() {}
@@ -26,7 +13,7 @@ public:
 	virtual void render(class Window* window, class Game* game) {}
 	virtual void unload() {}
 
-	virtual void handleEvent(SDL_Event* event) {}
+	virtual void handleEvent(union SDL_Event* event) {}
 };
 
 class Game {
@@ -42,7 +29,7 @@ public:
 	void update();
 	void render();
 
-	void handleEvent(SDL_Event* event) {}
+	void handleEvent(union SDL_Event* event);
 };
 
 #endif
