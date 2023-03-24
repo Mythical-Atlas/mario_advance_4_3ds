@@ -19,10 +19,17 @@ void Texture::load(string path) {
 #else
     glGenTextures(1, &pointer);
     glBindTexture(GL_TEXTURE_2D, pointer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size[0], size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size[0], size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
 #endif
 
-    stbi_image_free(data);
+    //stbi_image_free(data);
 }
 
 mat4 Sprite::getModelMatrix() {
@@ -44,11 +51,11 @@ void Sprite::init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rota
 }
 void Sprite::init(Texture* texture, vec2 uv[2]) {init(texture, uv, vec2(0, 0), vec2(1, 1), 0);}
 
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int off, int size) {
     renderProgram->use();
     renderProgram->bindTexture(texture);
     renderProgram->uniformMatrix4fv("modelMat", getModelMatrix());
 
     renderBuffer->bind();
-    renderBuffer->render(0, 4);
+    renderBuffer->render(off, size);
 }

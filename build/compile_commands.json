@@ -1,0 +1,62 @@
+[
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\camera.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\camera.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/camera.cpp",
+  "output": "CMakeFiles/mario.dir/source/camera.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\game.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\game.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/game.cpp",
+  "output": "CMakeFiles/mario.dir/source/game.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\graphics.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\graphics.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/graphics.cpp",
+  "output": "CMakeFiles/mario.dir/source/graphics.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\levelState.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\levelState.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/levelState.cpp",
+  "output": "CMakeFiles/mario.dir/source/levelState.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\main.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\main.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/main.cpp",
+  "output": "CMakeFiles/mario.dir/source/main.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\menuState.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\menuState.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/menuState.cpp",
+  "output": "CMakeFiles/mario.dir/source/menuState.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\renderBuffer.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\renderBuffer.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/renderBuffer.cpp",
+  "output": "CMakeFiles/mario.dir/source/renderBuffer.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\renderProgram.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\renderProgram.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/renderProgram.cpp",
+  "output": "CMakeFiles/mario.dir/source/renderProgram.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\g++.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\mario.dir\\source\\window.cpp.obj -c C:\\GitHub\\mario_advance_4_3ds\\source\\window.cpp",
+  "file": "C:/GitHub/mario_advance_4_3ds/source/window.cpp",
+  "output": "CMakeFiles/mario.dir/source/window.cpp.obj"
+},
+{
+  "directory": "C:/GitHub/mario_advance_4_3ds/build",
+  "command": "C:\\MinGW\\bin\\gcc.exe -DUSE_OPENGL_4_3 @CMakeFiles/mario.dir/includes_C.rsp -g -o CMakeFiles\\mario.dir\\dependencies\\glad\\src\\glad.c.obj -c C:\\GitHub\\mario_advance_4_3ds\\dependencies\\glad\\src\\glad.c",
+  "file": "C:/GitHub/mario_advance_4_3ds/dependencies/glad/src/glad.c",
+  "output": "CMakeFiles/mario.dir/dependencies/glad/src/glad.c.obj"
+}
+]

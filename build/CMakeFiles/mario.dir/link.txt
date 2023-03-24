@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\mario.dir/objects.a
+C:\MinGW\bin\ar.exe qc CMakeFiles\mario.dir/objects.a @CMakeFiles\mario.dir\objects1.rsp
+C:\MinGW\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\mario.dir/objects.a -Wl,--no-whole-archive -o C:\GitHub\mario_advance_4_3ds\mario.exe -Wl,--out-implib,libmario.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\mario.dir\linkLibs.rsp

@@ -60,8 +60,9 @@ void RenderProgram::link() {
 void RenderProgram::use() {glUseProgram(pointer);}
 
 void RenderProgram::bindTexture(unsigned int texture) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glProgramUniform1i(pointer, 0, 0);
+    //glProgramUniform1i(pointer, 0, 0);
 }
 void RenderProgram::bindTexture(Texture* texture) {bindTexture(texture->pointer);}
 
