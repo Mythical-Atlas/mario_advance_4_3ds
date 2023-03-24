@@ -1,4 +1,7 @@
 file(REMOVE_RECURSE
+  "C:/GitHub/mario_advance_4_3ds/mario.exe"
+  "C:/GitHub/mario_advance_4_3ds/mario.exe.manifest"
+  "C:/GitHub/mario_advance_4_3ds/mario.pdb"
   "CMakeFiles/mario.dir/dependencies/glad/src/glad.c.obj"
   "CMakeFiles/mario.dir/dependencies/glad/src/glad.c.obj.d"
   "CMakeFiles/mario.dir/source/camera.cpp.obj"
@@ -20,9 +23,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/mario.dir/source/window.cpp.obj"
   "CMakeFiles/mario.dir/source/window.cpp.obj.d"
   "libmario.dll.a"
-  "mario.exe"
-  "mario.exe.manifest"
-  "mario.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

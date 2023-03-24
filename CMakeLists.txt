@@ -19,6 +19,8 @@ add_executable(mario
 	dependencies/glad/src/glad.c
 )
 
+set_target_properties(mario PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ../ RUNTIME_OUTPUT_DIRECTORY_RELEASE ../)
+
 target_include_directories(mario PRIVATE include PUBLIC dependencies PUBLIC dependencies/glm-0.9.9.8/glm PUBLIC dependencies/glad/include PUBLIC dependencies/SDL2-2.26.4/include)
 target_link_directories(mario PUBLIC dependencies/SDL2-2.26.4/lib)
 target_link_libraries(mario SDL2main SDL2)
