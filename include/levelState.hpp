@@ -18,6 +18,8 @@ public:
 	void update(Window* window, Game* game);
 	void render(Window* window, Game* game) {}
 	void unload() {}
+
+	void handleEvent(SDL_Event* event) {}
 };
 
 #endif

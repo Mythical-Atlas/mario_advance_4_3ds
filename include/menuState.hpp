@@ -7,20 +7,32 @@
 #include "renderBuffer.hpp"
 #include "camera.hpp"
 #include "window.hpp"
+#include "audio.hpp"
 
 class MenuState: public State {
 public:
-	Texture tex;
-	Sprite sprite;
 	RenderProgram rp;
 	RenderBuffer rb;
 	Camera cam;
+	Controller controller;
+	AudioMixer mixer;
+
+	Texture tex;
+
+	AudioStream music;
+	AudioStream jump;
+	AudioStream coin;
+	AudioStream death;
+
+	Sprite sprite;
 
 	void load();
 	void init(class Window* window, class Game* game);
 	void update(Window* window, Game* game);
 	void render(Window* window, Game* game);
 	void unload();
+
+	void handleEvent(SDL_Event* event);
 };
 
 #endif

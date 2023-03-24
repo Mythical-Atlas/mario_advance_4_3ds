@@ -25,6 +25,8 @@ public:
 	virtual void update(class Window* window, class Game* game) {}
 	virtual void render(class Window* window, class Game* game) {}
 	virtual void unload() {}
+
+	virtual void handleEvent(SDL_Event* event) {}
 };
 
 class Game {
@@ -33,14 +35,14 @@ public:
 	State* states[STATE_COUNT];
 	State* state;
 	Window* window;
-	Controller controller; // what if in state?
-	//AudioMixer mixer; // what if in state?
 	
 	void changeState(int state);
 
 	void init(Window* window);
 	void update();
 	void render();
+
+	void handleEvent(SDL_Event* event) {}
 };
 
 #endif

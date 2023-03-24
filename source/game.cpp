@@ -21,10 +21,9 @@ void Game::init(Window* window) {
 
     changeState(0);
     running = true;
-
-    //mixer.init();
-    memset(&controller, 0, sizeof(Controller)); // could be done with a union in Controller
 }
 
 void Game::update() {state->update(window, this);}
 void Game::render() {state->render(window, this);}
+
+void Game::handleEvent(SDL_Event* event) {state->handleEvent(event);}
