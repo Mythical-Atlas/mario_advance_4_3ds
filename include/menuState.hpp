@@ -10,8 +10,12 @@
 
 class MenuState: public State {
 public:
-	Texture tex;
-	Sprite sprite;
+	Texture tex1;
+	Texture tex2;
+	Texture tex3;
+	Sprite sprite1;
+	Sprite sprite2;
+	Sprite sprite3;
 	RenderProgram rp;
 	RenderBuffer rb;
 	Camera cam;

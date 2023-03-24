@@ -34,7 +34,7 @@ public:
 
 	void init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rotation);
 	void init(Texture* texture, vec2 uv[2]);
-	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer);
+	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int off, int size);
 };
 
 class Background {};

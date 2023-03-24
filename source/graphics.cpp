@@ -51,11 +51,11 @@ void Sprite::init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rota
 }
 void Sprite::init(Texture* texture, vec2 uv[2]) {init(texture, uv, vec2(0, 0), vec2(1, 1), 0);}
 
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int off, int size) {
     renderProgram->use();
     renderProgram->bindTexture(texture);
     renderProgram->uniformMatrix4fv("modelMat", getModelMatrix());
 
     renderBuffer->bind();
-    renderBuffer->render(0, 4);
+    renderBuffer->render(off, size);
 }
