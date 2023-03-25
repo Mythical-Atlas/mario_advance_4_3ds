@@ -13,7 +13,7 @@ using namespace std;
 
 int main(int argc, char* args[]) {
 	Window window;
-	window.init(false, 1280, 720, "TEST WINDOW");
+	window.init(false, 400, 480, "Super Mario Advance 4: 3DS Edition");
 
 	Game game;
 	game.running = true;

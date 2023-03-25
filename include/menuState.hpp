@@ -12,26 +12,31 @@
 
 class MenuState: public State {
 public:
-	Texture tex1;
-	Texture tex2;
-	Texture tex3;
-	Sprite sprite1;
-	Sprite sprite2;
-	Sprite sprite3;
 	RenderProgram rp;
 	RenderBuffer rb;
 	Camera cam;
 	Controller controller;
 	AudioMixer mixer;
 
-	Texture tex;
+	Texture mmtopbgtex;
+	Texture mmbotbgtex;
+	Texture mmtexttex;
+
+	Sprite mmtopbg;
+	Sprite mmbotbg;
+	Sprite mmstart;
+	Sprite mmmap;
+	Sprite mmsettings;
+	Sprite mmexit;
+	Sprite mmmario;
+	Sprite mmluigi;
 
 	AudioStream music;
-	AudioStream jump;
-	AudioStream coin;
-	AudioStream death;
+	AudioStream move;
+	AudioStream select;
 
-	Sprite sprite;
+	int menuIndex;
+	int selectionIndex;
 
 	void load();
 	void init(class Window* window, class Game* game);

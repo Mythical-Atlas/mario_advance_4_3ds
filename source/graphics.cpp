@@ -29,7 +29,7 @@ void Texture::load(string path) {
     glGenerateMipmap(GL_TEXTURE_2D);
 #endif
 
-    //stbi_image_free(data);
+    stbi_image_free(data);
 }
 
 mat4 Sprite::getModelMatrix() {
@@ -49,7 +49,23 @@ void Sprite::init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rota
     this->scale = scale;
     this->rotation = rotation;
 }
+void Sprite::init(Texture* texture, int uv[4], int pos[2]) {
+    init(texture, new vec2[2]{
+        vec2((float)uv[0] / (float)texture->size[0], (float)uv[1] / (float)texture->size[1]),
+        vec2((float)uv[2] / (float)texture->size[0], (float)uv[3] / (float)texture->size[1])
+    }, vec2(pos[0], pos[1]), vec2(1, 1), 0);
+}
 void Sprite::init(Texture* texture, vec2 uv[2]) {init(texture, uv, vec2(0, 0), vec2(1, 1), 0);}
+void Sprite::init(Texture* texture) {init(texture, new vec2[2]{vec2(0, 0), vec2(1, 1)});}
+
+float* Sprite::getData() {
+    return new float[16] {
+        0,                       0,                       uv[0].x, uv[0].y,
+        0,                       (uv[1].y - uv[0].y) * (float)texture->size[1], uv[0].x, uv[1].y,
+        (uv[1].x - uv[0].x) * (float)texture->size[0], 0,                       uv[1].x, uv[0].y,
+        (uv[1].x - uv[0].x) * (float)texture->size[0], (uv[1].y - uv[0].y) * (float)texture->size[1], uv[1].x, uv[1].y
+    };
+}
 
 void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int off, int size) {
     renderProgram->use();

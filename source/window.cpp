@@ -42,6 +42,9 @@ void Window::init(bool fullscreen, int screenWidth, int screenHeight, string win
     cout << "Renderer: " << glGetString(GL_RENDERER) << endl;
     cout << "Version:  " << glGetString(GL_VERSION) << endl;
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Enable the debug callback
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
