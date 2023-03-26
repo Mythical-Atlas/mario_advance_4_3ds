@@ -41,37 +41,52 @@ mat4 Sprite::getModelMatrix() {
     return modelMat;
 }
 
-void Sprite::init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rotation) {
+void Sprite::init(Texture* texture, int vboIndex, int uv[4], int pos[3]) {
     this->texture = texture;
+    this->vboIndex = vboIndex;
     this->uv[0] = uv[0];
     this->uv[1] = uv[1];
-    this->pos = pos;
-    this->scale = scale;
-    this->rotation = rotation;
+    this->uv[2] = uv[2];
+    this->uv[3] = uv[3];
+    this->pos = vec2(pos[0], pos[1]);
+    scale = vec2(1, 1);
+    rotation = 0;
 }
-void Sprite::init(Texture* texture, int uv[4], int pos[2]) {
-    init(texture, new vec2[2]{
-        vec2((float)uv[0] / (float)texture->size[0], (float)uv[1] / (float)texture->size[1]),
-        vec2((float)uv[2] / (float)texture->size[0], (float)uv[3] / (float)texture->size[1])
-    }, vec2(pos[0], pos[1]), vec2(1, 1), 0);
-}
-void Sprite::init(Texture* texture, vec2 uv[2]) {init(texture, uv, vec2(0, 0), vec2(1, 1), 0);}
-void Sprite::init(Texture* texture) {init(texture, new vec2[2]{vec2(0, 0), vec2(1, 1)});}
+void Sprite::init(Texture* texture, int vboIndex, int uv[4]) {init(texture, vboIndex, uv, new int[2]{0, 0});}
+void Sprite::init(Texture* texture, int vboIndex) {init(texture, vboIndex, new int[4]{0, 0, texture->size[0], texture->size[1]});}
 
 float* Sprite::getData() {
+    float tw = texture->size[0];
+    float th = texture->size[1];
+    float sw = uv[2] - uv[0];
+    float sh = uv[3] - uv[1];
+    float ux1 = uv[0] / tw;
+    float uy1 = uv[1] / th;
+    float ux2 = uv[2] / tw;
+    float uy2 = uv[3] / th;
+
     return new float[16] {
-        0,                       0,                       uv[0].x, uv[0].y,
-        0,                       (uv[1].y - uv[0].y) * (float)texture->size[1], uv[0].x, uv[1].y,
-        (uv[1].x - uv[0].x) * (float)texture->size[0], 0,                       uv[1].x, uv[0].y,
-        (uv[1].x - uv[0].x) * (float)texture->size[0], (uv[1].y - uv[0].y) * (float)texture->size[1], uv[1].x, uv[1].y
+        0,  0,  ux1, uy1,
+        0,  sh, ux1, uy2,
+        sw, 0,  ux2, uy1,
+        sw, sh, ux2, uy2,
     };
 }
 
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int off, int size) {
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int frame[2]) {
+    float tw = texture->size[0];
+    float th = texture->size[1];
+    float sw = uv[2] - uv[0];
+    float sh = uv[3] - uv[1];
+
     renderProgram->use();
     renderProgram->bindTexture(texture);
     renderProgram->uniformMatrix4fv("modelMat", getModelMatrix());
+    renderProgram->uniform2fv("frame", vec2(frame[0] * sw / tw, frame[1] * sh / th));
+    renderProgram->uniform4fv("colorMult", vec4(1, 1, 1, 1));
+    renderProgram->uniform1ui("layer", 0);
 
     renderBuffer->bind();
-    renderBuffer->render(off, size);
+    renderBuffer->render(vboIndex * 4, 4);
 }
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {render(renderProgram, renderBuffer, new int[2]{0, 0});}

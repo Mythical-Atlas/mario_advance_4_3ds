@@ -25,21 +25,22 @@ public:
 class Sprite {
 public:
 	Texture* texture;
-	vec2 uv[2];
+	int uv[4];
+	int vboIndex;
 	vec2 pos;
 	vec2 scale;
 	float rotation;
 
     mat4 getModelMatrix();
 
-	void init(Texture* texture, vec2 uv[2], vec2 pos, vec2 scale, float rotation);
-	void init(Texture* texture, int uv[4], int pos[2]);
-	void init(Texture* texture, vec2 uv[2]);
-	void init(Texture* texture);
+	void init(Texture* texture, int vboIndex, int uv[4], int pos[2]);
+	void init(Texture* texture, int vboIndex, int uv[4]);
+	void init(Texture* texture, int vboIndex);
 
 	float* getData();
 
-	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int off, int size);
+	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int frame[2]);
+	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer);
 };
 
 class Background {};

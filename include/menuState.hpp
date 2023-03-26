@@ -38,6 +38,9 @@ public:
 	int menuIndex;
 	int selectionIndex;
 
+	bool moveReady;
+	bool selectReady;
+
 	void load();
 	void init(class Window* window, class Game* game);
 	void update(Window* window, Game* game);

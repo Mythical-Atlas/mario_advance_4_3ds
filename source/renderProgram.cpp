@@ -6,6 +6,7 @@
 #include "camera.hpp"
 
 using namespace std;
+using namespace glm;
 
 RenderProgram::RenderProgram(const char* name) {
     pointer = glCreateProgram();
@@ -66,8 +67,17 @@ void RenderProgram::bindTexture(unsigned int texture) {
 }
 void RenderProgram::bindTexture(Texture* texture) {bindTexture(texture->pointer);}
 
-void RenderProgram::uniformMatrix4fv(const char* name, glm::mat4 matrix) {
-    glUniformMatrix4fv(glGetUniformLocation(pointer, name), 1, GL_FALSE, glm::value_ptr(matrix));
+void RenderProgram::uniform2fv(const char* name, vec2 vector) {
+    glUniform2fv(glGetUniformLocation(pointer, name), 1, value_ptr(vector));
+}
+void RenderProgram::uniformMatrix4fv(const char* name, mat4 matrix) {
+    glUniformMatrix4fv(glGetUniformLocation(pointer, name), 1, GL_FALSE, value_ptr(matrix));
+}
+void RenderProgram::uniform4fv(const char* name, vec4 vector) {
+    glUniform4fv(glGetUniformLocation(pointer, name), 1, value_ptr(vector));
+}
+void RenderProgram::uniform1ui(const char* name, uint32_t integer) {
+    glUniform1ui(glGetUniformLocation(pointer, name), integer);
 }
 
 void RenderProgram::useViewMatrix(Camera* camera) {
