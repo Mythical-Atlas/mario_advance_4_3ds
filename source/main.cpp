@@ -26,11 +26,6 @@ int main(int argc, char* args[]) {
 		SDL_Event event;
 		while(window.pollEvent(&event)) {
 			switch(event.type) {
-				case SDL_KEYDOWN:
-					switch(event.key.keysym.sym) {
-						case SDLK_p: game.changeState(0); break;
-					}
-					break;
 				case SDL_QUIT:
 					game.running = false;
 					break;

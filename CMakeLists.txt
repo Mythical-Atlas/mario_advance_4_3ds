@@ -27,3 +27,7 @@ target_link_directories(mario PUBLIC dependencies/SDL2-2.26.4/lib)
 target_link_libraries(mario SDL2main SDL2 psapi)
 
 target_compile_definitions(mario PUBLIC USE_OPENGL_4_3)
+
+# todo
+# animations
+# tiles (single sprite?)

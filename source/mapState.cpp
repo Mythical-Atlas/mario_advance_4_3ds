@@ -30,12 +30,11 @@ void MapState::load()  {
     int attribSizes[2] = {2, 2};
     rb = RenderBuffer(2, attribSizes, 4 * VERTS_SIZE);
 
-    /*float* tempPointer;
-    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, botbgsprite.getData(tempPointer));
-    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mapsprite.getData(tempPointer));
-    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, fernsprite.getData(tempPointer));
-    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, iconsprite.getData(tempPointer));
-    delete(tempPointer);*/
+    float vertDataBuffer[16];
+    botbgsprite.getData(vertDataBuffer); rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mapsprite.getData(vertDataBuffer);   rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    fernsprite.getData(vertDataBuffer);  rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    iconsprite.getData(vertDataBuffer);  rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
 
     /*music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
