@@ -1,6 +1,8 @@
 #ifndef MENU_STATE_H
 #define MENU_STATE_H
 
+#include <chrono>
+
 #include "game.hpp"
 #include "graphics.hpp"
 #include "renderProgram.hpp"
@@ -10,8 +12,19 @@
 #include "audio.hpp"
 #include "controller.hpp"
 
+using namespace chrono;
+
 class MenuState: public State {
 public:
+	time_point<steady_clock> stateStartTime;
+	time_point<steady_clock> frameStartTime;
+
+	uint32_t dt;
+	uint32_t timeSinceInit;
+
+	uint32_t ticksSinceLastDebugPrint;
+	uint32_t debugPrintTimer;
+
 	RenderProgram rp;
 	RenderBuffer rb;
 	Camera cam;

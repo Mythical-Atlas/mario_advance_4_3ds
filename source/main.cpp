@@ -16,7 +16,6 @@ int main(int argc, char* args[]) {
 	window.init(false, 400, 480, "Super Mario Advance 4: 3DS Edition");
 
 	Game game;
-	game.running = true;
 	game.init(&window);
 
 	while(game.running) {

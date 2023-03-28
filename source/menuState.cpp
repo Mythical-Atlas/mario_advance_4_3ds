@@ -1,6 +1,9 @@
 #include <string>
 #include <iostream>
 
+#include "windows.h"
+#include "psapi.h"
+
 #include "menuState.hpp"
 #include "audio.hpp"
 
@@ -55,27 +58,24 @@ void MenuState::init(Window* window, Game* game)  {
 	mixer.addStream(&death);
 
     music.start();*/
-    
-    /*sprite1.pos = vec2(0, 0);
-    sprite2.pos = vec2(200, 500);
-    sprite3.pos = vec2(500, 200);*/
 
 	menuIndex = 0;
 	selectionIndex = 0;
     moveReady = false;
     selectReady = false;
+
+    stateStartTime = steady_clock::now();
+    frameStartTime = stateStartTime;
+
+    debugPrintTimer = 0;
 }
 void MenuState::update(Window* window, Game* game)  {
-    /*if(controller.up) {sprite2.pos.y -= 0.1f;}
-    if(controller.down) {sprite2.pos.y += 0.1f;}
-    if(controller.left) {sprite2.pos.x -= 0.1f;}
-    if(controller.right) {sprite2.pos.x += 0.1f;}
-    
-    if(controller.l) {sprite2.rotation -= 0.01f;}
-    if(controller.r) {sprite2.rotation += 0.01f;}
-    
-    if(controller.b) {sprite2.scale.x += 0.01f;}
-    if(controller.a) {sprite2.scale.y += 0.01f;}*/
+    time_point<steady_clock> currentTime = steady_clock::now();
+    dt = duration_cast<milliseconds>(currentTime - frameStartTime).count();
+    frameStartTime = currentTime;
+    timeSinceInit = duration_cast<milliseconds>(currentTime - stateStartTime).count();
+
+    ticksSinceLastDebugPrint++;
 
     if(controller.start && selectReady) {
         if(menuIndex == 0) {
@@ -118,13 +118,23 @@ void MenuState::update(Window* window, Game* game)  {
     selectReady = !controller.start;
 }
 void MenuState::render(Window* window, Game* game)  { // TODO: layering using z position
+    if(timeSinceInit - debugPrintTimer >= 1000) {
+        PROCESS_MEMORY_COUNTERS_EX pmc;
+        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+		SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+
+        float tickRate = (float)ticksSinceLastDebugPrint / (timeSinceInit - debugPrintTimer) * 1000.0f;
+
+        cout << "Virtual memory used: " << virtualMemUsedByMe << " bytes" << endl;
+        cout << "Tick rate: " << tickRate << " fps" << endl;
+
+        ticksSinceLastDebugPrint = 0;
+        debugPrintTimer += 1000;
+    }
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     rp.useViewMatrix(&cam);
-
-    /*sprite1.render(&rp, &rb, 0, 4);
-    sprite2.render(&rp, &rb, 4, 4);
-    sprite3.render(&rp, &rb, 8, 4);*/
 
     mmtopbg.render(&rp, &rb);
     mmbotbg.render(&rp, &rb);

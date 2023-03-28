@@ -89,4 +89,7 @@ void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, in
     renderBuffer->bind();
     renderBuffer->render(vboIndex * 4, 4);
 }
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {render(renderProgram, renderBuffer, new int[2]{0, 0});}
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {
+    int frame[2] = {0, 0};
+    render(renderProgram, renderBuffer, frame);
+}

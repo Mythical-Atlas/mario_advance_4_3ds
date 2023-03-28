@@ -49,13 +49,15 @@ void RenderBuffer::destroy() {
     glDeleteVertexArrays(1, &glarray);
 }
 
-void RenderBuffer::uploadData(int offset, int size, float data[]) {
+void RenderBuffer::uploadData(int offset, int size, float* data) {
 #ifndef USE_OPENGL_4_3
     glNamedBufferSubData(glbuffer, sizeof(GLfloat) * offset, sizeof(GLfloat) * size, data);
 #else
     glBindBuffer(GL_ARRAY_BUFFER, glbuffer);
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * offset, sizeof(GLfloat) * size, data);
 #endif
+
+    delete(data);
 }
 
 void RenderBuffer::bind() {

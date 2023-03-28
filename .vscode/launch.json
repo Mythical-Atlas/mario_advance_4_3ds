@@ -21,7 +21,15 @@
                     //"ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "CMake: build"
+            "preLaunchTask": "CMake: build",
+			"logging": {
+				"exceptions": true,
+				"moduleLoad": false,
+				"programOutput": true,
+				"engineLogging": false,
+				"trace": false,
+				"traceResponse": false
+			},
 		}
 	]
 }

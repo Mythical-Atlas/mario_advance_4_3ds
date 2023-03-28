@@ -11,12 +11,12 @@
 #define STATE_TYPE_MENU 1
 #define STATE_TYPE_LEVEL 2
 
-class TimeObject { // all times measured in ms
+/*class TimeObject { // all times measured in ms
 public:
 	uint64_t programStartTime;
 	uint64_t frameStartTime;
 	uint16_t lastFrameDuration;
-};
+};*/
 
 class Tileset {
 	Texture tilesheet;
