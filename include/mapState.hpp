@@ -31,28 +31,28 @@ public:
 	Controller controller;
 	AudioMixer mixer;
 
-	Texture mmtopbgtex;
-	Texture mmbotbgtex;
-	Texture mmtexttex;
+	Texture botbgtex;
+	Texture maptex;
+	Texture ferntex;
+	Texture icontex;
 
-	Sprite mmtopbg;
-	Sprite mmbotbg;
-	Sprite mmstart;
-	Sprite mmmap;
-	Sprite mmsettings;
-	Sprite mmexit;
-	Sprite mmmario;
-	Sprite mmluigi;
+	Sprite botbgsprite;
+	Sprite mapsprite;
+	Sprite fernsprite;
+	Sprite iconsprite;
 
 	AudioStream music;
 	AudioStream move;
 	AudioStream select;
 
-	int menuIndex;
-	int selectionIndex;
+	int mapIndex;
 
 	bool moveReady;
 	bool selectReady;
+
+	uint32_t animTimer;
+	int fernFrame[2];
+	int iconFrame[2];
 
 	void load();
 	void init(class Window* window, class Game* game);

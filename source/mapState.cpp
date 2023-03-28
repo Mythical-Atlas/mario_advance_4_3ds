@@ -17,29 +17,22 @@ void MapState::load()  {
     rp.attachShader(GL_FRAGMENT_SHADER, "resources/versatileShader.frag");
     rp.link();
 
-	mmtopbgtex.load("resources/main menu top.png");
-    mmbotbgtex.load("resources/main menu bottom.png");
-    mmtexttex.load("resources/main menu text.png");
+	botbgtex.load("resources/map bottom.png");
+    maptex.load("resources/map top.png");
+    ferntex.load("resources/map fern.png");
+    icontex.load("resources/map icon.png");
 
-    mmtopbg.init(&mmtopbgtex,   0, new int[4]{0, 0, 400, 240},         new int[2]{0, 0});
-    mmbotbg.init(&mmbotbgtex,   1, new int[4]{0, 0, 320, 240},         new int[2]{40, 240});
-    mmstart.init(&mmtexttex,    2, new int[4]{0, 0 * 17, 107, 1 * 17}, new int[2]{95 + 40, 112 + 240});
-    mmmap.init(&mmtexttex,      3, new int[4]{0, 1 * 17, 107, 2 * 17}, new int[2]{95 + 40, 80 + 240});
-    mmsettings.init(&mmtexttex, 4, new int[4]{0, 2 * 17, 107, 3 * 17}, new int[2]{95 + 40, 112 + 240});
-    mmexit.init(&mmtexttex,     5, new int[4]{0, 3 * 17, 107, 4 * 17}, new int[2]{95 + 40, 144 + 240});
-    mmmario.init(&mmtexttex,    6, new int[4]{0, 4 * 17, 107, 5 * 17}, new int[2]{95 + 40, 96 + 240});
-    mmluigi.init(&mmtexttex,    7, new int[4]{0, 5 * 17, 107, 6 * 17}, new int[2]{95 + 40, 128 + 240});
+    botbgsprite.init(&botbgtex, 0, new int[4]{0, 0, 320, 240}, new int[2]{40, 240});
+    mapsprite.init(&maptex,     1, new int[4]{0, 0, 400, 240}, new int[2]{0, 0});
+    fernsprite.init(&ferntex,   2, new int[4]{0, 0, 16, 16});
+    iconsprite.init(&icontex,   3, new int[4]{0, 0, 8, 8});
 
-    rb = RenderBuffer(2, new int[2]{2, 2}, 8 * VERTS_SIZE);
+    rb = RenderBuffer(2, new int[2]{2, 2}, 4 * VERTS_SIZE);
 
-    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, mmtopbg.getData());
-    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mmbotbg.getData());
-    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, mmstart.getData());
-    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, mmmap.getData());
-    rb.uploadData(4 * VERTS_SIZE, VERTS_SIZE, mmsettings.getData());
-    rb.uploadData(5 * VERTS_SIZE, VERTS_SIZE, mmexit.getData());
-    rb.uploadData(6 * VERTS_SIZE, VERTS_SIZE, mmmario.getData());
-    rb.uploadData(7 * VERTS_SIZE, VERTS_SIZE, mmluigi.getData());
+    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, botbgsprite.getData());
+    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mapsprite.getData());
+    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, fernsprite.getData());
+    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, iconsprite.getData());
 
     /*music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
@@ -59,8 +52,7 @@ void MapState::init(Window* window, Game* game)  {
 
     music.start();*/
 
-	menuIndex = 0;
-	selectionIndex = 0;
+	mapIndex = 0;
     moveReady = false;
     selectReady = false;
 
@@ -68,6 +60,10 @@ void MapState::init(Window* window, Game* game)  {
     frameStartTime = stateStartTime;
 
     debugPrintTimer = 0;
+
+    animTimer = 0;
+    fernFrame[0] = 0; fernFrame[1] = 0;
+    iconFrame[0] = 0; iconFrame[1] = 0;
 }
 void MapState::update(Window* window, Game* game)  {
     time_point<steady_clock> currentTime = steady_clock::now();
@@ -77,44 +73,25 @@ void MapState::update(Window* window, Game* game)  {
 
     ticksSinceLastDebugPrint++;
 
-    if(controller.start && selectReady) {
-        if(menuIndex == 0) {
-            menuIndex++;
-            selectionIndex = 0;
-        }
-        else if(menuIndex == 1) {
-            if(selectionIndex == 0) {
-                menuIndex++;
-                selectionIndex = 0;
-            }
-            else if(selectionIndex == 2) {
-                menuIndex--;
-                selectionIndex = 0;
-            }
-        }
-    }
+    if(controller.start && selectReady) {}
     if(controller.up && moveReady) {
-        if(menuIndex == 1) {
-            if(selectionIndex > 0) {selectionIndex--;}
-            else {selectionIndex = 2;}
-        }
-        else if(menuIndex == 2) {
-            if(selectionIndex > 0) {selectionIndex--;}
-            else {selectionIndex = 1;}
-        }
+        if(mapIndex == 0) {mapIndex++;}
+        else if(mapIndex == 5 || mapIndex == 7) {mapIndex--;}
     }
     if(controller.down && moveReady) {
-        if(menuIndex == 1) {
-            if(selectionIndex < 2) {selectionIndex++;}
-            else {selectionIndex = 0;}
-        }
-        else if(menuIndex == 2) {
-            if(selectionIndex < 1) {selectionIndex++;}
-            else {selectionIndex = 0;}
-        }
+        if(mapIndex == 1) {mapIndex--;}
+        else if(mapIndex == 4 || mapIndex == 6) {mapIndex++;}
+    }
+    if(controller.left && moveReady) {
+         if(mapIndex >= 2 && mapIndex <= 4) {mapIndex--;}
+        else if(mapIndex == 5) {mapIndex++;}
+    }
+    if(controller.right && moveReady) {
+        if(mapIndex >= 1 && mapIndex <= 3) {mapIndex++;}
+        else if(mapIndex == 6) {mapIndex--;}
     }
 
-    moveReady = !controller.up && !controller.down;
+    moveReady = !controller.up && !controller.down && !controller.left && !controller.right;
     selectReady = !controller.start;
 }
 void MapState::render(Window* window, Game* game)  { // TODO: layering using z position
@@ -129,26 +106,63 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
         cout << "Tick rate: " << tickRate << " fps" << endl;
 
         ticksSinceLastDebugPrint = 0;
-        debugPrintTimer += 1000;
+        while(timeSinceInit - debugPrintTimer >= 1000) {debugPrintTimer += 1000;}
     }
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     rp.useViewMatrix(&cam);
 
-    //mmtopbg.render(&rp, &rb);
-    mmbotbg.render(&rp, &rb);
-    
-    if(menuIndex == 0) {mmstart.render(&rp, &rb);}
-    if(menuIndex == 1) {
-        mmmap.render(&rp, &rb, new int[2]{selectionIndex == 0, 0});
-        mmsettings.render(&rp, &rb, new int[2]{selectionIndex == 1, 0});
-        mmexit.render(&rp, &rb, new int[2]{selectionIndex == 2, 0});
+    botbgsprite.render(&rp, &rb);
+    mapsprite.render(&rp, &rb);
+
+    int mapFerns[25 * 15] = {
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    };
+
+    if(timeSinceInit - animTimer >= 100) {
+        fernFrame[0]++;
+        iconFrame[0]++;
+
+        if(fernFrame[0] > 3) {fernFrame[0] = 0;}
+        if(iconFrame[0] > 2) {iconFrame[0] = 0;}
+
+        while(timeSinceInit - animTimer >= 100) {animTimer += 100;}
     }
-    if(menuIndex == 2) {
-        mmmario.render(&rp, &rb, new int[2]{selectionIndex == 0, 0});
-        mmluigi.render(&rp, &rb, new int[2]{selectionIndex == 1, 0});
+
+    for(int x = 0; x < 25; x++) {
+        for(int y = 0; y < 15; y++) {
+            if(mapFerns[x + y * 25]) {
+                fernsprite.pos = vec2(x * 16, y * 16);
+                fernsprite.render(&rp, &rb, fernFrame);
+            }
+        }
     }
+
+    if(mapIndex == 0) {iconsprite.pos = vec2( 8 * 16 + 4, 6 * 16 + 4);}
+    if(mapIndex == 1) {iconsprite.pos = vec2( 8 * 16 + 4, 4 * 16 + 4);}
+    if(mapIndex == 2) {iconsprite.pos = vec2(10 * 16 + 4, 4 * 16 + 4);}
+    if(mapIndex == 3) {iconsprite.pos = vec2(14 * 16 + 4, 4 * 16 + 4);}
+    if(mapIndex == 4) {iconsprite.pos = vec2(17 * 16 + 4, 4 * 16 + 4);}
+    if(mapIndex == 5) {iconsprite.pos = vec2(17 * 16 + 4, 7 * 16 + 4);}
+    if(mapIndex == 6) {iconsprite.pos = vec2(12 * 16 + 4, 7 * 16 + 4);}
+    if(mapIndex == 7) {iconsprite.pos = vec2(12 * 16 + 4, 9 * 16 + 4);}
+
+    iconsprite.render(&rp, &rb, iconFrame);
 }
 void MapState::unload() {
 	mixer.unload();
