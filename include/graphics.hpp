@@ -37,7 +37,7 @@ public:
 	void init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3);
 	void init(Texture* texture, int vboIndex);
 
-	float* getData(float* tempPointer);
+	void getData(float* buffer);
 
 	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int xFrame, int yFrame);
 	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer);

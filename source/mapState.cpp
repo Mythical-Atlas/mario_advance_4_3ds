@@ -30,12 +30,12 @@ void MapState::load()  {
     int attribSizes[2] = {2, 2};
     rb = RenderBuffer(2, attribSizes, 4 * VERTS_SIZE);
 
-    float* tempPointer;
+    /*float* tempPointer;
     rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, botbgsprite.getData(tempPointer));
     rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mapsprite.getData(tempPointer));
     rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, fernsprite.getData(tempPointer));
     rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, iconsprite.getData(tempPointer));
-    delete(tempPointer);
+    delete(tempPointer);*/
 
     /*music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
@@ -43,7 +43,7 @@ void MapState::load()  {
 	death = AudioStream("romfs/death.raw", SDL_MIX_MAXVOLUME, false);*/
 }
 void MapState::init(Window* window, Game* game)  {
-    cam.init(new int[2]{(int)window->getScreenSize().x, (int)window->getScreenSize().y});
+    cam.init((int)window->getScreenSize().x, (int)window->getScreenSize().y);
 
     mixer.init();
     memset(&controller, 0, sizeof(Controller)); // could be done with a union in Controller

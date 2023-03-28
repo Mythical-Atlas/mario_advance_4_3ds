@@ -33,16 +33,15 @@ void MenuState::load()  {
     int attribSizes[2] = {2, 2};
     rb = RenderBuffer(2, attribSizes, 8 * VERTS_SIZE);
 
-    float* tempPointer;
-    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, mmtopbg.getData(tempPointer));
-    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mmbotbg.getData(tempPointer));
-    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, mmstart.getData(tempPointer));
-    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, mmmap.getData(tempPointer));
-    rb.uploadData(4 * VERTS_SIZE, VERTS_SIZE, mmsettings.getData(tempPointer));
-    rb.uploadData(5 * VERTS_SIZE, VERTS_SIZE, mmexit.getData(tempPointer));
-    rb.uploadData(6 * VERTS_SIZE, VERTS_SIZE, mmmario.getData(tempPointer));
-    rb.uploadData(7 * VERTS_SIZE, VERTS_SIZE, mmluigi.getData(tempPointer));
-    delete(tempPointer);
+    float vertDataBuffer[16];
+    mmtopbg.getData(vertDataBuffer);    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmbotbg.getData(vertDataBuffer);    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmstart.getData(vertDataBuffer);    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmmap.getData(vertDataBuffer);      rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmsettings.getData(vertDataBuffer); rb.uploadData(4 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmexit.getData(vertDataBuffer);     rb.uploadData(5 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmmario.getData(vertDataBuffer);    rb.uploadData(6 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
+    mmluigi.getData(vertDataBuffer);    rb.uploadData(7 * VERTS_SIZE, VERTS_SIZE, vertDataBuffer);
 
     /*music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
@@ -50,7 +49,7 @@ void MenuState::load()  {
 	death = AudioStream("romfs/death.raw", SDL_MIX_MAXVOLUME, false);*/
 }
 void MenuState::init(Window* window, Game* game)  {
-    cam.init(new int[2]{(int)window->getScreenSize().x, (int)window->getScreenSize().y});
+    cam.init((int)window->getScreenSize().x, (int)window->getScreenSize().y);
 
     mixer.init();
     memset(&controller, 0, sizeof(Controller)); // could be done with a union in Controller

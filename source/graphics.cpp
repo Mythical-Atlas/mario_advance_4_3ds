@@ -45,18 +45,18 @@ mat4 Sprite::getModelMatrix() {
 void Sprite::init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3, int pos0, int pos1) {
     this->texture = texture;
     this->vboIndex = vboIndex;
-    this->uv[0] = uv0;
-    this->uv[1] = uv1;
-    this->uv[2] = uv2;
-    this->uv[3] = uv3;
-    this->pos = vec2(pos0, pos1);
+    uv[0] = uv0;
+    uv[1] = uv1;
+    uv[2] = uv2;
+    uv[3] = uv3;
+    pos = vec2(pos0, pos1);
     scale = vec2(1, 1);
     rotation = 0;
 }
 void Sprite::init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3) {init(texture, vboIndex, uv0, uv1, uv2, uv3, 0, 0);}
 void Sprite::init(Texture* texture, int vboIndex) {init(texture, vboIndex, 0, 0, texture->size[0], texture->size[1]);}
 
-float* Sprite::getData(float* tempPointer) {
+void Sprite::getData(float* buffer) {
     float tw = texture->size[0];
     float th = texture->size[1];
     float sw = uv[2] - uv[0];
@@ -66,14 +66,13 @@ float* Sprite::getData(float* tempPointer) {
     float ux2 = uv[2] / tw;
     float uy2 = uv[3] / th;
 
-    tempPointer = new float[16] {
+    float tempBuffer[16] = {
         0,  0,  ux1, uy1,
         0,  sh, ux1, uy2,
         sw, 0,  ux2, uy1,
         sw, sh, ux2, uy2,
     };
-
-    return tempPointer;
+    memcpy(buffer, tempBuffer, 16 * sizeof(float));
 }
 
 void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int xFrame, int yFrame) {

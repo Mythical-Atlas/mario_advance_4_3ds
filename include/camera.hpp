@@ -15,7 +15,7 @@ public:
 	vec2 scale;
 	float rotation;
 
-    void init(int viewSize[2]);
+    void init(int width, int height);
     mat4 getViewMatrix();
 };
 
