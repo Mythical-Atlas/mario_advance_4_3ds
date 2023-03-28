@@ -4,14 +4,14 @@
 #include "windows.h"
 #include "psapi.h"
 
-#include "menuState.hpp"
+#include "mapState.hpp"
 #include "audio.hpp"
 
 #define VERTS_SIZE 16
 
 using namespace std;
 
-void MenuState::load()  {
+void MapState::load()  {
 	rp = RenderProgram("Sprite Program");
     rp.attachShader(GL_VERTEX_SHADER, "resources/versatileShader.vert");
     rp.attachShader(GL_FRAGMENT_SHADER, "resources/versatileShader.frag");
@@ -46,7 +46,7 @@ void MenuState::load()  {
 	coin = AudioStream("romfs/coin.raw", SDL_MIX_MAXVOLUME, false);
 	death = AudioStream("romfs/death.raw", SDL_MIX_MAXVOLUME, false);*/
 }
-void MenuState::init(Window* window, Game* game)  {
+void MapState::init(Window* window, Game* game)  {
     cam.init(new int[2]{(int)window->getScreenSize().x, (int)window->getScreenSize().y});
 
     mixer.init();
@@ -69,7 +69,7 @@ void MenuState::init(Window* window, Game* game)  {
 
     debugPrintTimer = 0;
 }
-void MenuState::update(Window* window, Game* game)  {
+void MapState::update(Window* window, Game* game)  {
     time_point<steady_clock> currentTime = steady_clock::now();
     dt = duration_cast<milliseconds>(currentTime - frameStartTime).count();
     frameStartTime = currentTime;
@@ -90,11 +90,6 @@ void MenuState::update(Window* window, Game* game)  {
             else if(selectionIndex == 2) {
                 menuIndex--;
                 selectionIndex = 0;
-            }
-        }
-        else if(menuIndex == 2) {
-            if(selectionIndex == 0) {
-                game->changeState(1);
             }
         }
     }
@@ -122,7 +117,7 @@ void MenuState::update(Window* window, Game* game)  {
     moveReady = !controller.up && !controller.down;
     selectReady = !controller.start;
 }
-void MenuState::render(Window* window, Game* game)  { // TODO: layering using z position
+void MapState::render(Window* window, Game* game)  { // TODO: layering using z position
     if(timeSinceInit - debugPrintTimer >= 1000) {
         PROCESS_MEMORY_COUNTERS_EX pmc;
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -134,14 +129,14 @@ void MenuState::render(Window* window, Game* game)  { // TODO: layering using z 
         cout << "Tick rate: " << tickRate << " fps" << endl;
 
         ticksSinceLastDebugPrint = 0;
-        while(timeSinceInit - debugPrintTimer >= 1000) {debugPrintTimer += 1000;}
+        debugPrintTimer += 1000;
     }
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     rp.useViewMatrix(&cam);
 
-    mmtopbg.render(&rp, &rb);
+    //mmtopbg.render(&rp, &rb);
     mmbotbg.render(&rp, &rb);
     
     if(menuIndex == 0) {mmstart.render(&rp, &rb);}
@@ -155,8 +150,8 @@ void MenuState::render(Window* window, Game* game)  { // TODO: layering using z 
         mmluigi.render(&rp, &rb, new int[2]{selectionIndex == 1, 0});
     }
 }
-void MenuState::unload() {
+void MapState::unload() {
 	mixer.unload();
 }
 
-void MenuState::handleEvent(SDL_Event* event) {controller.handleEvent(event);}
+void MapState::handleEvent(SDL_Event* event) {controller.handleEvent(event);}

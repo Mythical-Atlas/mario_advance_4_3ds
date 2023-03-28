@@ -12,6 +12,7 @@ add_executable(mario
 	include/graphics.hpp 		source/graphics.cpp
 	include/levelState.hpp 		source/levelState.cpp
 	include/main.hpp 			source/main.cpp
+	include/mapState.hpp		source/mapState.cpp
 	include/menuState.hpp 		source/menuState.cpp
 	include/renderBuffer.hpp 	source/renderBuffer.cpp
 	include/renderProgram.hpp 	source/renderProgram.cpp
