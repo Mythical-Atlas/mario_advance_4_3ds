@@ -30,11 +30,13 @@ void RenderBuffer::allocate(int attribCount, int attribSizes[], int size, float 
     glGenVertexArrays(1, &glarray); // vao
     glBindVertexArray(glarray);
 
+    glBindVertexBuffer(0, glbuffer, 0, sizeof(GLfloat) * totalSize);
+
     int offset = 0;
     for(int i = 0; i < attribCount; i++) {
-        glBindBuffer(GL_ARRAY_BUFFER, glbuffer);
-        glVertexAttribPointer(i, attribSizes[i], GL_FLOAT, GL_FALSE, offset, NULL);
         glEnableVertexAttribArray(i);
+        glVertexAttribFormat(i, attribSizes[i], GL_FLOAT, GL_FALSE, offset);
+        glVertexAttribBinding(i, 0);
 
         offset += sizeof(GLfloat) * attribSizes[i];
     }

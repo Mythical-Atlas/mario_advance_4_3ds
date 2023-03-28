@@ -12,4 +12,5 @@ uniform mat4 modelMat;
 void main(void) {
     texCoords = uvPos;
     gl_Position = viewMat * modelMat * vec4(size, layer, 1);
+    //gl_Position = viewMat * vec4(size, 0, 1);
 }

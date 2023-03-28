@@ -10,4 +10,5 @@ uniform vec2 frame;
 
 void main(void) {
     color = texture(image, texCoords + frame) * colorMult;
+    //color = colorMult;
 }
