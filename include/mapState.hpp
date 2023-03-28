@@ -49,6 +49,9 @@ public:
 
 	bool moveReady;
 	bool selectReady;
+	
+	int movingIcon;
+	int iconDirection;
 
 	uint32_t animTimer;
 	int fernFrame[2];

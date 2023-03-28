@@ -64,6 +64,8 @@ void MapState::init(Window* window, Game* game)  {
     animTimer = 0;
     fernFrame[0] = 0; fernFrame[1] = 0;
     iconFrame[0] = 0; iconFrame[1] = 0;
+    movingIcon = -1;
+    iconDirection = 0;
 }
 void MapState::update(Window* window, Game* game)  {
     time_point<steady_clock> currentTime = steady_clock::now();
@@ -73,22 +75,48 @@ void MapState::update(Window* window, Game* game)  {
 
     ticksSinceLastDebugPrint++;
 
-    if(controller.start && selectReady) {}
-    if(controller.up && moveReady) {
-        if(mapIndex == 0) {mapIndex++;}
-        else if(mapIndex == 5 || mapIndex == 7) {mapIndex--;}
-    }
-    if(controller.down && moveReady) {
-        if(mapIndex == 1) {mapIndex--;}
-        else if(mapIndex == 4 || mapIndex == 6) {mapIndex++;}
-    }
-    if(controller.left && moveReady) {
-         if(mapIndex >= 2 && mapIndex <= 4) {mapIndex--;}
-        else if(mapIndex == 5) {mapIndex++;}
-    }
-    if(controller.right && moveReady) {
-        if(mapIndex >= 1 && mapIndex <= 3) {mapIndex++;}
-        else if(mapIndex == 6) {mapIndex--;}
+    if(movingIcon == -1) {
+        if(controller.start && selectReady) {}
+        if(controller.up && moveReady) {
+            if(mapIndex == 0) {
+                movingIcon = 10;
+                iconDirection = 1;
+            }
+            else if(mapIndex == 5 || mapIndex == 7) {
+                movingIcon = 10;
+                iconDirection = -1;
+            }
+        }
+        if(controller.down && moveReady) {
+            if(mapIndex == 1) {
+                movingIcon = 10;
+                iconDirection = -1;
+            }
+            else if(mapIndex == 4 || mapIndex == 6) {
+                movingIcon = 10;
+                iconDirection = 1;
+            }
+        }
+        if(controller.left && moveReady) {
+            if(mapIndex >= 2 && mapIndex <= 4) {
+                movingIcon = 10;
+                iconDirection = -1;
+            }
+            else if(mapIndex == 5) {
+                movingIcon = 10;
+                iconDirection = 1;
+            }
+        }
+        if(controller.right && moveReady) {
+            if(mapIndex >= 1 && mapIndex <= 3) {
+                movingIcon = 10;
+                iconDirection = 1;
+            }
+            else if(mapIndex == 6) {
+                movingIcon = 10;
+                iconDirection = -1;
+            }
+        }
     }
 
     moveReady = !controller.up && !controller.down && !controller.left && !controller.right;
@@ -142,6 +170,15 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
         if(iconFrame[0] > 2) {iconFrame[0] = 0;}
 
         while(timeSinceInit - animTimer >= 100) {animTimer += 100;}
+        
+        if(movingIcon > 0) {movingIcon--;}
+        else if(movingIcon == 0) {
+            if(iconDirection == 1) {mapIndex++;}
+            else if(iconDirection == -1) {mapIndex--;}
+
+            movingIcon = -1;
+            iconDirection = 0;
+        }
     }
 
     for(int x = 0; x < 25; x++) {
@@ -153,14 +190,60 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
         }
     }
 
-    if(mapIndex == 0) {iconsprite.pos = vec2( 8 * 16 + 4, 6 * 16 + 4);}
-    if(mapIndex == 1) {iconsprite.pos = vec2( 8 * 16 + 4, 4 * 16 + 4);}
-    if(mapIndex == 2) {iconsprite.pos = vec2(10 * 16 + 4, 4 * 16 + 4);}
-    if(mapIndex == 3) {iconsprite.pos = vec2(14 * 16 + 4, 4 * 16 + 4);}
-    if(mapIndex == 4) {iconsprite.pos = vec2(17 * 16 + 4, 4 * 16 + 4);}
-    if(mapIndex == 5) {iconsprite.pos = vec2(17 * 16 + 4, 7 * 16 + 4);}
-    if(mapIndex == 6) {iconsprite.pos = vec2(12 * 16 + 4, 7 * 16 + 4);}
-    if(mapIndex == 7) {iconsprite.pos = vec2(12 * 16 + 4, 9 * 16 + 4);}
+    if(mapIndex == 0) {
+        if(movingIcon == -1) {iconsprite.pos = vec2( 8 * 16 + 4, 6 * 16 + 4);}
+        else {
+            if(iconDirection == 1) {iconsprite.pos = vec2( 8 * 16 + 4, 4 * 16 + 4 + (2 * 16 * movingIcon / 10));}
+        }
+    }
+    if(mapIndex == 1) {
+        if(movingIcon == -1) {iconsprite.pos = vec2( 8 * 16 + 4, 4 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2( 8 * 16 + 4, 6 * 16 + 4 - (2 * 16 * movingIcon / 10));}
+            if(iconDirection == 1) {iconsprite.pos = vec2(10 * 16 + 4 - (2 * 16 * movingIcon / 10), 4 * 16 + 4);}
+        }
+    }
+    if(mapIndex == 2) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(10 * 16 + 4, 4 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2( 8 * 16 + 4 + (2 * 16 * movingIcon / 10), 4 * 16 + 4);}
+            if(iconDirection == 1) {iconsprite.pos = vec2(14 * 16 + 4 - (4 * 16 * movingIcon / 10), 4 * 16 + 4);}
+        }
+    }
+    if(mapIndex == 3) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(14 * 16 + 4, 4 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2(10 * 16 + 4 + (4 * 16 * movingIcon / 10), 4 * 16 + 4);}
+            if(iconDirection == 1) {iconsprite.pos = vec2(17 * 16 + 4 - (3 * 16 * movingIcon / 10), 4 * 16 + 4);}
+        }
+    }
+    if(mapIndex == 4) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(17 * 16 + 4, 4 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2(14 * 16 + 4 + (3 * 16 * movingIcon / 10), 4 * 16 + 4);}
+            if(iconDirection == 1) {iconsprite.pos = vec2(17 * 16 + 4, 7 * 16 + 4 - (3 * 16 * movingIcon / 10));}
+        }
+    }
+    if(mapIndex == 5) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(17 * 16 + 4, 7 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2(17 * 16 + 4, 4 * 16 + 4 + (3 * 16 * movingIcon / 10));}
+            if(iconDirection == 1) {iconsprite.pos = vec2(12 * 16 + 4 + (5 * 16 * movingIcon / 10), 7 * 16 + 4);}
+        }
+    }
+    if(mapIndex == 6) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(12 * 16 + 4, 7 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2(17 * 16 + 4 - (5 * 16 * movingIcon / 10), 7 * 16 + 4);}
+            if(iconDirection == 1) {iconsprite.pos = vec2(12 * 16 + 4, 9 * 16 + 4 - (2 * 16 * movingIcon / 10));}
+        }
+    }
+    if(mapIndex == 7) {
+        if(movingIcon == -1) {iconsprite.pos = vec2(12 * 16 + 4, 9 * 16 + 4);}
+        else {
+            if(iconDirection == -1) {iconsprite.pos = vec2(12 * 16 + 4, 7 * 16 + 4 + (2 * 16 * movingIcon / 10));}
+        }
+    }
 
     iconsprite.render(&rp, &rb, iconFrame);
 }
