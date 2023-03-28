@@ -13,6 +13,8 @@ RenderProgram::RenderProgram(const char* name) {
     glObjectLabel(GL_PROGRAM, pointer, -1, name);
 }
 
+void RenderProgram::destroy() {glDeleteProgram(pointer);}
+
 void RenderProgram::attachShader(GLenum type, const char* path) {
     string data;
     string line = "";

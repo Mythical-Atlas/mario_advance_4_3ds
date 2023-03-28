@@ -54,8 +54,8 @@ public:
 	int iconDirection;
 
 	uint32_t animTimer;
-	int fernFrame[2];
-	int iconFrame[2];
+	int fernFrame;
+	int iconFrame;
 
 	void load();
 	void init(class Window* window, class Game* game);

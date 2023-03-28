@@ -16,10 +16,10 @@ class Texture {
 public:
 	int size[2];
 	int channels;
-	unsigned char* data; // needed?
 	unsigned int pointer;
 
 	void load(string path);
+	void unload();
 };
 
 class Sprite {
@@ -33,13 +33,13 @@ public:
 
     mat4 getModelMatrix();
 
-	void init(Texture* texture, int vboIndex, int uv[4], int pos[2]);
-	void init(Texture* texture, int vboIndex, int uv[4]);
+	void init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3, int pos0, int pos1);
+	void init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3);
 	void init(Texture* texture, int vboIndex);
 
-	float* getData();
+	float* getData(float* tempPointer);
 
-	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int frame[2]);
+	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer, int xFrame, int yFrame);
 	void render(class RenderProgram* renderProgram, class RenderBuffer* renderBuffer);
 };
 

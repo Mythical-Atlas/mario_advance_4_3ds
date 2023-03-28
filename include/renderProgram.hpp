@@ -13,6 +13,8 @@ public:
     RenderProgram() {}
     RenderProgram(const char* name);
     
+    void destroy();
+
     void attachShader(GLenum type, const char* path);
 
     void link();

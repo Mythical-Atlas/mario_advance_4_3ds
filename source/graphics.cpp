@@ -6,7 +6,7 @@
 #include "renderProgram.hpp"
 
 void Texture::load(string path) {
-    data = stbi_load(path.c_str(), &size[0], &size[1], &channels, 0);
+    unsigned char* data = stbi_load(path.c_str(), &size[0], &size[1], &channels, 0);
     if(data == NULL) {
         cout << "Could not load image file" << endl;
         abort();
@@ -31,6 +31,7 @@ void Texture::load(string path) {
 
     stbi_image_free(data);
 }
+void Texture::unload() {glDeleteTextures(1, &pointer);}
 
 mat4 Sprite::getModelMatrix() {
     mat4 modelMat(1);
@@ -41,21 +42,21 @@ mat4 Sprite::getModelMatrix() {
     return modelMat;
 }
 
-void Sprite::init(Texture* texture, int vboIndex, int uv[4], int pos[3]) {
+void Sprite::init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3, int pos0, int pos1) {
     this->texture = texture;
     this->vboIndex = vboIndex;
-    this->uv[0] = uv[0];
-    this->uv[1] = uv[1];
-    this->uv[2] = uv[2];
-    this->uv[3] = uv[3];
-    this->pos = vec2(pos[0], pos[1]);
+    this->uv[0] = uv0;
+    this->uv[1] = uv1;
+    this->uv[2] = uv2;
+    this->uv[3] = uv3;
+    this->pos = vec2(pos0, pos1);
     scale = vec2(1, 1);
     rotation = 0;
 }
-void Sprite::init(Texture* texture, int vboIndex, int uv[4]) {init(texture, vboIndex, uv, new int[2]{0, 0});}
-void Sprite::init(Texture* texture, int vboIndex) {init(texture, vboIndex, new int[4]{0, 0, texture->size[0], texture->size[1]});}
+void Sprite::init(Texture* texture, int vboIndex, int uv0, int uv1, int uv2, int uv3) {init(texture, vboIndex, uv0, uv1, uv2, uv3, 0, 0);}
+void Sprite::init(Texture* texture, int vboIndex) {init(texture, vboIndex, 0, 0, texture->size[0], texture->size[1]);}
 
-float* Sprite::getData() {
+float* Sprite::getData(float* tempPointer) {
     float tw = texture->size[0];
     float th = texture->size[1];
     float sw = uv[2] - uv[0];
@@ -65,15 +66,17 @@ float* Sprite::getData() {
     float ux2 = uv[2] / tw;
     float uy2 = uv[3] / th;
 
-    return new float[16] {
+    tempPointer = new float[16] {
         0,  0,  ux1, uy1,
         0,  sh, ux1, uy2,
         sw, 0,  ux2, uy1,
         sw, sh, ux2, uy2,
     };
+
+    return tempPointer;
 }
 
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int frame[2]) {
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, int xFrame, int yFrame) {
     float tw = texture->size[0];
     float th = texture->size[1];
     float sw = uv[2] - uv[0];
@@ -82,14 +85,11 @@ void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer, in
     renderProgram->use();
     renderProgram->bindTexture(texture);
     renderProgram->uniformMatrix4fv("modelMat", getModelMatrix());
-    renderProgram->uniform2fv("frame", vec2(frame[0] * sw / tw, frame[1] * sh / th));
+    renderProgram->uniform2fv("frame", vec2(xFrame * sw / tw, yFrame * sh / th));
     renderProgram->uniform4fv("colorMult", vec4(1, 1, 1, 1));
     renderProgram->uniform1ui("layer", 0);
 
     renderBuffer->bind();
     renderBuffer->render(vboIndex * 4, 4);
 }
-void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {
-    int frame[2] = {0, 0};
-    render(renderProgram, renderBuffer, frame);
-}
+void Sprite::render(RenderProgram* renderProgram, RenderBuffer* renderBuffer) {render(renderProgram, renderBuffer, 0, 0);}

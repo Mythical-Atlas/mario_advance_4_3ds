@@ -22,17 +22,20 @@ void MapState::load()  {
     ferntex.load("resources/map fern.png");
     icontex.load("resources/map icon.png");
 
-    botbgsprite.init(&botbgtex, 0, new int[4]{0, 0, 320, 240}, new int[2]{40, 240});
-    mapsprite.init(&maptex,     1, new int[4]{0, 0, 400, 240}, new int[2]{0, 0});
-    fernsprite.init(&ferntex,   2, new int[4]{0, 0, 16, 16});
-    iconsprite.init(&icontex,   3, new int[4]{0, 0, 8, 8});
+    botbgsprite.init(&botbgtex, 0, 0, 0, 320, 240, 40, 240);
+    mapsprite.init(&maptex,     1, 0, 0, 400, 240, 0, 0);
+    fernsprite.init(&ferntex,   2, 0, 0, 16, 16);
+    iconsprite.init(&icontex,   3, 0, 0, 8, 8);
 
-    rb = RenderBuffer(2, new int[2]{2, 2}, 4 * VERTS_SIZE);
+    int attribSizes[2] = {2, 2};
+    rb = RenderBuffer(2, attribSizes, 4 * VERTS_SIZE);
 
-    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, botbgsprite.getData());
-    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mapsprite.getData());
-    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, fernsprite.getData());
-    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, iconsprite.getData());
+    float* tempPointer;
+    rb.uploadData(0 * VERTS_SIZE, VERTS_SIZE, botbgsprite.getData(tempPointer));
+    rb.uploadData(1 * VERTS_SIZE, VERTS_SIZE, mapsprite.getData(tempPointer));
+    rb.uploadData(2 * VERTS_SIZE, VERTS_SIZE, fernsprite.getData(tempPointer));
+    rb.uploadData(3 * VERTS_SIZE, VERTS_SIZE, iconsprite.getData(tempPointer));
+    delete(tempPointer);
 
     /*music = AudioStream("romfs/shortMusic.raw", SDL_MIX_MAXVOLUME, true);
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
@@ -62,8 +65,8 @@ void MapState::init(Window* window, Game* game)  {
     debugPrintTimer = 0;
 
     animTimer = 0;
-    fernFrame[0] = 0; fernFrame[1] = 0;
-    iconFrame[0] = 0; iconFrame[1] = 0;
+    fernFrame = 0;
+    iconFrame = 0;
     movingIcon = -1;
     iconDirection = 0;
 }
@@ -163,11 +166,11 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
     };
 
     if(timeSinceInit - animTimer >= 100) {
-        fernFrame[0]++;
-        iconFrame[0]++;
+        fernFrame++;
+        iconFrame++;
 
-        if(fernFrame[0] > 3) {fernFrame[0] = 0;}
-        if(iconFrame[0] > 2) {iconFrame[0] = 0;}
+        if(fernFrame > 3) {fernFrame = 0;}
+        if(iconFrame > 2) {iconFrame = 0;}
 
         while(timeSinceInit - animTimer >= 100) {animTimer += 100;}
         
@@ -185,7 +188,7 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
         for(int y = 0; y < 15; y++) {
             if(mapFerns[x + y * 25]) {
                 fernsprite.pos = vec2(x * 16, y * 16);
-                fernsprite.render(&rp, &rb, fernFrame);
+                fernsprite.render(&rp, &rb, fernFrame, 0);
             }
         }
     }
@@ -245,7 +248,7 @@ void MapState::render(Window* window, Game* game)  { // TODO: layering using z p
         }
     }
 
-    iconsprite.render(&rp, &rb, iconFrame);
+    iconsprite.render(&rp, &rb, iconFrame, 0);
 }
 void MapState::unload() {
 	mixer.unload();

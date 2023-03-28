@@ -58,8 +58,6 @@ void RenderBuffer::uploadData(int offset, int size, float* data) {
     glBindBuffer(GL_ARRAY_BUFFER, glbuffer);
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * offset, sizeof(GLfloat) * size, data);
 #endif
-
-    delete(data);
 }
 
 void RenderBuffer::bind() {
