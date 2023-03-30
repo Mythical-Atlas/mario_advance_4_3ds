@@ -6,6 +6,7 @@
 
 #include "menuState.hpp"
 #include "audio.hpp"
+#include "animation.hpp"
 
 #define VERTS_SIZE 16
 
@@ -47,6 +48,8 @@ void MenuState::load()  {
 	jump = AudioStream("romfs/grow.raw", SDL_MIX_MAXVOLUME, false);
 	coin = AudioStream("romfs/coin.raw", SDL_MIX_MAXVOLUME, false);
 	death = AudioStream("romfs/death.raw", SDL_MIX_MAXVOLUME, false);*/
+
+    Animation testAnim = Animation("resources/testAnim.json");
 }
 void MenuState::init(Window* window, Game* game)  {
     cam.init((int)window->getScreenSize().x, (int)window->getScreenSize().y);

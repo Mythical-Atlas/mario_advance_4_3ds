@@ -45,8 +45,6 @@ public:
 
 class Background {};
 
-class Animation {};
-
 class HUD {};
 
 #endif
