@@ -1,0 +1,41 @@
+{
+    "activeFile": "main menu.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "main menu bg.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "main menu.tmx": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 224,
+                "y": 161
+            }
+        },
+        "main menu.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        }
+    },
+    "frame.defaultDuration": 100,
+    "last.imagePath": "C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/small tilesets",
+    "openFiles": [
+        "main menu.tmx",
+        "main menu.tsx"
+    ],
+    "project": "main menu.tiled-project",
+    "recentFiles": [
+        "main menu.tsx",
+        "main menu.tmx",
+        "main menu bg.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 240,
+        "width": 400
+    }
+}
