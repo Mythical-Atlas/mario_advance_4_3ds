@@ -6,11 +6,14 @@
 #include "camera.hpp"
 
 using namespace std;
+using namespace glm;
 
 RenderProgram::RenderProgram(const char* name) {
     pointer = glCreateProgram();
     glObjectLabel(GL_PROGRAM, pointer, -1, name);
 }
+
+void RenderProgram::destroy() {glDeleteProgram(pointer);}
 
 void RenderProgram::attachShader(GLenum type, const char* path) {
     string data;
@@ -60,13 +63,23 @@ void RenderProgram::link() {
 void RenderProgram::use() {glUseProgram(pointer);}
 
 void RenderProgram::bindTexture(unsigned int texture) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glProgramUniform1i(pointer, 0, 0);
+    //glProgramUniform1i(pointer, 0, 0);
 }
 void RenderProgram::bindTexture(Texture* texture) {bindTexture(texture->pointer);}
 
-void RenderProgram::uniformMatrix4fv(const char* name, glm::mat4 matrix) {
-    glUniformMatrix4fv(glGetUniformLocation(pointer, name), 1, GL_FALSE, glm::value_ptr(matrix));
+void RenderProgram::uniform2fv(const char* name, vec2 vector) {
+    glUniform2fv(glGetUniformLocation(pointer, name), 1, value_ptr(vector));
+}
+void RenderProgram::uniformMatrix4fv(const char* name, mat4 matrix) {
+    glUniformMatrix4fv(glGetUniformLocation(pointer, name), 1, GL_FALSE, value_ptr(matrix));
+}
+void RenderProgram::uniform4fv(const char* name, vec4 vector) {
+    glUniform4fv(glGetUniformLocation(pointer, name), 1, value_ptr(vector));
+}
+void RenderProgram::uniform1ui(const char* name, uint32_t integer) {
+    glUniform1ui(glGetUniformLocation(pointer, name), integer);
 }
 
 void RenderProgram::useViewMatrix(Camera* camera) {

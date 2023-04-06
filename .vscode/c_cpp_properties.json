@@ -1,16 +1,17 @@
 {
     "configurations": [
         {
-            "name": "Win64",
+            "name": "Win32",
             "includePath": [
                 "C:/MinGW/include/**",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/dependencies",
                 "${workspaceFolder}/dependencies/glm-0.9.9.8/glm",
                 "${workspaceFolder}/dependencies/glad/include",
-                "${workspaceFolder}/dependencies/SDL2-2.26.4/include"
+                "${workspaceFolder}/dependencies/SDL2-2.26.4/include",
+                "${workspaceFolder}/dependencies/rapidjson-1.1.0/include"
             ],
-            "defines": [],
+            "defines": [/*"USE_OPENGL_4_3"*/],
             "cStandard": "c17",
             "cppStandard": "c++17",
             "compilerArgs": []

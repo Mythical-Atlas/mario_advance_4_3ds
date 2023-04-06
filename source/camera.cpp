@@ -3,9 +3,9 @@
 
 //using namespace glm;
 
-void Camera::init(int viewSize[2]) {
-    this->viewSize[0] = viewSize[0];
-    this->viewSize[1] = viewSize[1];
+void Camera::init(int width, int height) {
+    viewSize[0] = width;
+    viewSize[1] = height;
 
     pos = vec2(0, 0);
     scale = vec2(1, 1);

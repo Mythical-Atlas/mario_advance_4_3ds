@@ -13,6 +13,8 @@ public:
     RenderProgram() {}
     RenderProgram(const char* name);
     
+    void destroy();
+
     void attachShader(GLenum type, const char* path);
 
     void link();
@@ -22,7 +24,10 @@ public:
     void bindTexture(class Texture* texture);
     void bindTexture(unsigned int texture);
 
+    void uniform2fv(const char* name, vec2 vector);
     void uniformMatrix4fv(const char* name, mat4 matrix);
+    void uniform4fv(const char* name, vec4 vector);
+    void uniform1ui(const char* name, uint32_t integer);
 
     void useViewMatrix(class Camera* camera);
 };

@@ -4,6 +4,7 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+
 		{
 			"name": "C++ Launch (Windows)",
 			"cwd": "${workspaceFolder}",
@@ -20,7 +21,15 @@
                     //"ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "preLaunchTask": "CMake: build",
+			"logging": {
+				"exceptions": true,
+				"moduleLoad": false,
+				"programOutput": true,
+				"engineLogging": false,
+				"trace": false,
+				"traceResponse": false
+			},
 		}
 	]
 }

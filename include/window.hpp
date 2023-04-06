@@ -27,7 +27,7 @@ private:
     SDL_GLContext maincontext;
 
     static void sdl_die(const char* message) {
-        cerr << message << ": " << SDL_GetError() << endl;
+        cout << message << ": " << SDL_GetError() << endl;
         abort();
     }
 
@@ -39,9 +39,9 @@ private:
         (void)length;
         (void)userParam;
 
-        cerr << message << endl;
+        cout << message << endl;
         if(severity == GL_DEBUG_SEVERITY_HIGH) {
-            cerr << "Aborting..." << endl;
+            cout << "Aborting..." << endl;
             abort();
         }
     }

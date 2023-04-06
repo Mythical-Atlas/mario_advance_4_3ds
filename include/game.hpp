@@ -1,7 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define STATE_COUNT 2
+//#include "audio.hpp"
+
+#define STATE_COUNT 3
 
 class State {
 public:
@@ -10,6 +12,8 @@ public:
 	virtual void update(class Window* window, class Game* game) {}
 	virtual void render(class Window* window, class Game* game) {}
 	virtual void unload() {}
+
+	virtual void handleEvent(union SDL_Event* event) {}
 };
 
 class Game {
@@ -24,6 +28,8 @@ public:
 	void init(Window* window);
 	void update();
 	void render();
+
+	void handleEvent(union SDL_Event* event);
 };
 
 #endif
