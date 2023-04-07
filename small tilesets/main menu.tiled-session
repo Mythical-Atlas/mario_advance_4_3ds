@@ -1,5 +1,9 @@
 {
-    "activeFile": "main menu.tmx",
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "world 1 toad house 1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -12,30 +16,120 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 224,
-                "y": 161
+                "x": 237.5,
+                "y": 113
             }
         },
         "main menu.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 4
+        },
+        "secret.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "world 1 map.tmx": {
+            "scale": 3.9530048076923077,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 208.0695673325428,
+                "y": 128.00389187874367
+            }
+        },
+        "world 1 map.tsx": {
+            "scaleInDock": 1
+        },
+        "world 1 toad house 1.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 200.66666666666663,
+                "y": 105.66666666666666
+            }
+        },
+        "world 1-1 pipe.tmx": {
+            "scale": 4.046634615384615,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 186.94546750623738,
+                "y": 119.85267910181776
+            }
+        },
+        "world 1-1 pipe.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "world 1-1.tmx": {
+            "scale": 0.5737396408839778,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1449.263639372875,
+                "y": 176.03803677289295
+            }
+        },
+        "world 1-1.tsx": {
+            "scaleInDock": 1
+        },
+        "world 1-2.tmx": {
+            "scale": 0.5494647790055248,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1381.3442262372348,
+                "y": 116.47698350353494
+            }
+        },
+        "world 1-2.tsx": {
+            "scaleInDock": 1
+        },
+        "world 1-3 pipe.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 189.5,
+                "y": 215
+            }
+        },
+        "world 1-3.tmx": {
+            "scale": 0.5726468373493976,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1176.1175581051318,
+                "y": 68.10480291922818
+            }
+        },
+        "world 1-3.tsx": {
+            "scaleInDock": 1
         }
     },
     "frame.defaultDuration": 100,
-    "last.imagePath": "C:/Users/Ben/Documents/GitHub/mario_advance_4_3ds/small tilesets",
+    "last.imagePath": "C:/GitHub/mario_advance_4_3ds/small tilesets",
+    "map.height": 15,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 25,
     "openFiles": [
-        "main menu.tmx",
-        "main menu.tsx"
+        "secret.tsx",
+        "world 1 toad house 1.tmx"
     ],
     "project": "main menu.tiled-project",
     "recentFiles": [
+        "secret.tsx",
+        "world 1 toad house 1.tmx",
+        "world 1-1 pipe.tsx",
+        "world 1-3 pipe.tmx",
+        "world 1-2.tmx",
+        "world 1-3.tmx",
+        "world 1-1.tmx",
+        "world 1-1 pipe.tmx",
         "main menu.tsx",
         "main menu.tmx",
+        "world 1 map.tmx",
         "main menu bg.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 240,
-        "width": 400
+        "height": 16,
+        "width": 16
     }
 }
